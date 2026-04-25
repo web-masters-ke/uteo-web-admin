@@ -35,6 +35,8 @@ export const PAGE_ROLES: Record<string, AdminRole[]> = {
   '/dashboard/jobs': ['SUPER_ADMIN', 'ADMIN', 'SUPPORT'],
   '/dashboard/companies': ['SUPER_ADMIN', 'ADMIN', 'SUPPORT'],
   '/dashboard/applications': ['SUPER_ADMIN', 'ADMIN', 'SUPPORT'],
+  '/dashboard/candidates': ['SUPER_ADMIN', 'ADMIN', 'SUPPORT'],
+  '/dashboard/interviews': ['SUPER_ADMIN', 'ADMIN', 'SUPPORT'],
   '/dashboard/reports': ['SUPER_ADMIN', 'ADMIN', 'SUPPORT'],
   '/dashboard/analytics/jobs': ['SUPER_ADMIN', 'ADMIN', 'FINANCE_ADMIN'],
 };

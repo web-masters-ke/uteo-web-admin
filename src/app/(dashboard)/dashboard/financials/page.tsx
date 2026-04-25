@@ -47,7 +47,7 @@ interface MoneyFlowData {
 const fmtKES = (n: number) => formatCurrency(Number(n) || 0);
 const fmtCount = (n: number) => (Number(n) || 0).toLocaleString();
 
-const BRAND = { navy: '#192C67', gold: '#F77B0F', teal: '#0D9488', green: '#22c55e', red: '#ef4444', sky: '#0ea5e9' };
+const BRAND = { navy: '#F77B0F', gold: '#F77B0F', teal: '#0D9488', green: '#22c55e', red: '#ef4444', sky: '#0ea5e9' };
 
 const PERIODS = [
   { label: '7 Days', value: '7d' },
@@ -524,7 +524,7 @@ export default function FinancialsPage() {
                   label="Platform Wallet Balance"
                   value={fmtKES(wallet.platformWalletBalance)}
                   subtitle="Available funds"
-                  accentColor="#192C67"
+                  accentColor="#F77B0F"
                   image="https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80"
                 />
                 <HeroCard

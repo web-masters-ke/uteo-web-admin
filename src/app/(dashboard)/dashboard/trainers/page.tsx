@@ -403,7 +403,7 @@ export default function TrainersPage() {
         if (!tt) return <span className="text-muted-foreground text-xs">-</span>;
         return (
           <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-            tt === 'PROFESSIONAL' ? 'bg-[#192C67]/10 text-[#192C67] dark:bg-[#192C67]/30 dark:text-[#5b8bc7]' :
+            tt === 'PROFESSIONAL' ? 'bg-[#F77B0F]/10 text-[#F77B0F] dark:bg-[#F77B0F]/30 dark:text-[#5b8bc7]' :
             tt === 'VOCATIONAL' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
             'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
           }`}>

@@ -91,7 +91,7 @@ export default function AuditLogsPage() {
   }, [fetchLogs]);
 
   const ic =
-    'px-3 py-2 rounded-lg border border-border bg-card text-card-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#192C67]/30';
+    'px-3 py-2 rounded-lg border border-border bg-card text-card-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#F77B0F]/30';
 
   const hasFilters = search || actionFilter || resourceFilter || startDate || endDate;
 
@@ -191,7 +191,7 @@ export default function AuditLogsPage() {
               e.stopPropagation();
               setExpandedId(isExpanded ? null : l.id);
             }}
-            className="text-xs text-[#192C67] dark:text-[#F77B0F] hover:underline"
+            className="text-xs text-[#F77B0F] dark:text-[#F77B0F] hover:underline"
           >
             {isExpanded ? 'Hide' : 'View'}
           </button>

@@ -616,7 +616,7 @@ export default function TrainerDetailPage() {
                       { label: 'Total Earnings', value: formatCurrency(earningsSummary?.totalEarnings ?? 0), color: 'text-card-foreground' },
                       { label: 'Commission Paid', value: formatCurrency(earningsSummary?.commissionPaid ?? 0), color: 'text-amber-600 dark:text-amber-400' },
                       { label: 'Net Earnings', value: formatCurrency(earningsSummary?.netEarnings ?? 0), color: 'text-green-600 dark:text-green-400' },
-                      { label: 'Pending Withdrawal', value: formatCurrency(earningsSummary?.pendingWithdrawal ?? 0), color: 'text-[#192C67] dark:text-blue-300' },
+                      { label: 'Pending Withdrawal', value: formatCurrency(earningsSummary?.pendingWithdrawal ?? 0), color: 'text-[#F77B0F] dark:text-blue-300' },
                     ].map(({ label, value, color }) => (
                       <div key={label} className="bg-card rounded-xl border border-border p-4">
                         <p className="text-xs text-muted-foreground">{label}</p>

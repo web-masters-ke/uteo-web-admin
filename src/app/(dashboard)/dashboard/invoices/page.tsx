@@ -83,11 +83,11 @@ function downloadReceipt(inv: InvoiceItem) {
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; color: #1e293b; padding: 40px; max-width: 800px; margin: 0 auto; }
-  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 3px solid #192C67; padding-bottom: 20px; }
-  .logo { font-size: 24px; font-weight: 900; color: #192C67; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 3px solid #F77B0F; padding-bottom: 20px; }
+  .logo { font-size: 24px; font-weight: 900; color: #F77B0F; }
   .logo small { display: block; font-size: 11px; font-weight: 400; color: #64748b; letter-spacing: 1px; }
   .invoice-title { text-align: right; }
-  .invoice-title h1 { font-size: 28px; color: #192C67; text-transform: uppercase; letter-spacing: 2px; }
+  .invoice-title h1 { font-size: 28px; color: #F77B0F; text-transform: uppercase; letter-spacing: 2px; }
   .invoice-title .number { font-size: 14px; color: #64748b; margin-top: 4px; }
   .status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
   .status-PAID { background: #dcfce7; color: #166534; }
@@ -107,12 +107,12 @@ function downloadReceipt(inv: InvoiceItem) {
   .totals { display: flex; justify-content: flex-end; }
   .totals table { width: 280px; }
   .totals td { border: none; padding: 6px 12px; }
-  .totals .grand { font-size: 18px; font-weight: 900; color: #192C67; border-top: 2px solid #192C67; }
+  .totals .grand { font-size: 18px; font-weight: 900; color: #F77B0F; border-top: 2px solid #F77B0F; }
   .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; color: #94a3b8; font-size: 12px; }
   @media print { body { padding: 20px; } .no-print { display: none; } }
 </style></head><body>
   <div class="no-print" style="margin-bottom:20px;text-align:right">
-    <button onclick="window.print()" style="padding:10px 24px;background:#192C67;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px">Print / Save as PDF</button>
+    <button onclick="window.print()" style="padding:10px 24px;background:#F77B0F;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px">Print / Save as PDF</button>
   </div>
   <div class="header">
     <div class="logo">SkillSasa<small>LEARN, GROW, SUCCEED</small></div>
@@ -549,7 +549,7 @@ export default function InvoicesPage() {
     }
     // Download receipt always available
     actions.push(
-      <button key="download" onClick={() => downloadReceipt(inv)} className={`${btnBase} bg-[#192C67]/10 text-[#192C67] hover:bg-gray-50 dark:hover:bg-white/10/20`}>
+      <button key="download" onClick={() => downloadReceipt(inv)} className={`${btnBase} bg-[#F77B0F]/10 text-[#F77B0F] hover:bg-gray-50 dark:hover:bg-white/10/20`}>
         <span className="flex items-center gap-1"><svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>Receipt</span>
       </button>
     );
@@ -919,7 +919,7 @@ export default function InvoicesPage() {
             </button>
             <button
               onClick={() => { resetForm(); setCreateModal(true); }}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#192C67] hover:bg-[#0f1e47] text-white text-sm font-semibold transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#F77B0F] hover:bg-[#0f1e47] text-white text-sm font-semibold transition-colors shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
               Create Invoice
@@ -989,7 +989,7 @@ export default function InvoicesPage() {
                 onClick={() => { setStatusFilter(s); setPage(1); }}
                 className={`px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-colors ${
                   statusFilter === s
-                    ? 'bg-[#192C67] text-white'
+                    ? 'bg-[#F77B0F] text-white'
                     : 'bg-muted text-muted-foreground hover:text-card-foreground hover:bg-muted/80'
                 }`}
               >

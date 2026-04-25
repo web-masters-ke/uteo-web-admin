@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     shortcut: '/favicon.svg',
   },
   manifest: '/manifest.json',
-  themeColor: '#192C67',
+  themeColor: '#F77B0F',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

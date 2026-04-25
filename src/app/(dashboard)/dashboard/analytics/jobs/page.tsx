@@ -221,7 +221,7 @@ export default function JobAnalyticsPage() {
             title="Jobs Posted Over Time"
             subtitle={`New job postings per day (last ${period})`}
             data={jobsPerDay}
-            color="#192C67"
+            color="#F77B0F"
             name="Jobs"
             height={280}
           />

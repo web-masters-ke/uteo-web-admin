@@ -50,7 +50,7 @@ const PERIODS: { label: string; value: Period }[] = [
 ];
 
 const BRAND = {
-  navy: '#192C67',
+  navy: '#F77B0F',
   gold: '#F77B0F',
   teal: '#0D9488',
   green: '#22c55e',
@@ -704,7 +704,7 @@ export default function AnalyticsPage() {
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-[#192C67] flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                              <div className="w-8 h-8 rounded-full bg-[#F77B0F] flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                                 {t.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
                               </div>
                               <span className="font-medium text-card-foreground">{t.name}</span>

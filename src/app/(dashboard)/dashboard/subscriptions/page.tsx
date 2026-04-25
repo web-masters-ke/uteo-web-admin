@@ -249,7 +249,7 @@ function Tab({
       onClick={onClick}
       className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
         active
-          ? 'bg-[#192C67] text-white shadow-sm'
+          ? 'bg-[#F77B0F] text-white shadow-sm'
           : 'text-muted-foreground hover:text-card-foreground hover:bg-muted'
       }`}
     >
@@ -272,7 +272,7 @@ function UnderlineTab({
       onClick={onClick}
       className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
         active
-          ? 'border-[#192C67] text-[#192C67] dark:border-blue-400 dark:text-blue-400'
+          ? 'border-[#F77B0F] text-[#F77B0F] dark:border-blue-400 dark:text-blue-400'
           : 'border-transparent text-muted-foreground hover:text-card-foreground'
       }`}
     >
@@ -285,7 +285,7 @@ function UnderlineTab({
 /*  Form input class                                                   */
 /* ------------------------------------------------------------------ */
 
-const ic = 'w-full px-3 py-2 rounded-lg border border-border bg-card text-card-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#192C67]/30 focus:border-[#192C67]';
+const ic = 'w-full px-3 py-2 rounded-lg border border-border bg-card text-card-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#F77B0F]/30 focus:border-[#F77B0F]';
 
 /* ------------------------------------------------------------------ */
 /*  Org plan table columns reused                                      */
@@ -650,7 +650,7 @@ export default function SubscriptionsPage() {
           mainTab === 'plans' ? (
             <button
               onClick={() => handleOpenCreate(planSubTab === 'org')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#192C67] hover:bg-[#0f1e47] text-white text-sm font-semibold transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F77B0F] hover:bg-[#0f1e47] text-white text-sm font-semibold transition-colors shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -683,7 +683,7 @@ export default function SubscriptionsPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <MetricCard label="Total Plans" value={stats ? formatNumber(stats.totalPlans) : '—'} loading={statsLoading} />
             <MetricCard label="Active Plans" value={stats ? formatNumber(stats.activePlans) : '—'} loading={statsLoading} accent="#10B981" />
-            <MetricCard label="MRR" value={stats ? formatCurrency(stats.mrr) : '—'} loading={statsLoading} accent="#192C67" />
+            <MetricCard label="MRR" value={stats ? formatCurrency(stats.mrr) : '—'} loading={statsLoading} accent="#F77B0F" />
             <MetricCard label="Expiring in 7d" value={stats ? formatNumber(stats.expiringSoon) : '—'} loading={statsLoading} accent="#F59E0B" />
           </div>
 
@@ -710,7 +710,7 @@ export default function SubscriptionsPage() {
                   <p className="text-muted-foreground text-sm mb-3">No global subscription plans yet</p>
                   <button
                     onClick={() => handleOpenCreate(false)}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#192C67] hover:bg-[#0f1e47] text-white text-sm font-semibold transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F77B0F] hover:bg-[#0f1e47] text-white text-sm font-semibold transition-colors"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                     Create First Plan
@@ -755,7 +755,7 @@ export default function SubscriptionsPage() {
                 {selectedOrg && (
                   <button
                     onClick={() => handleOpenCreate(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#192C67] hover:bg-[#0f1e47] text-white text-sm font-semibold transition-colors shadow-sm"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F77B0F] hover:bg-[#0f1e47] text-white text-sm font-semibold transition-colors shadow-sm"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                     Create Custom Plan
@@ -816,7 +816,7 @@ export default function SubscriptionsPage() {
                 onClick={() => { setSubStatusFilter(opt.value); setSubPage(1); }}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   subStatusFilter === opt.value
-                    ? 'bg-[#192C67] text-white'
+                    ? 'bg-[#F77B0F] text-white'
                     : 'bg-muted text-muted-foreground hover:text-card-foreground hover:bg-muted/80'
                 }`}
               >
@@ -846,7 +846,7 @@ export default function SubscriptionsPage() {
         <>
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <MetricCard label="Total Revenue" value={formatCurrency(totalRevenue)} loading={statsLoading} accent="#192C67" />
+            <MetricCard label="Total Revenue" value={formatCurrency(totalRevenue)} loading={statsLoading} accent="#F77B0F" />
             <MetricCard label="MRR" value={stats ? formatCurrency(stats.mrr) : '—'} loading={statsLoading} accent="#7C3AED" />
             <MetricCard label="Total Subscribers" value={formatNumber(totalSubscribers)} loading={statsLoading} accent="#10B981" />
             <MetricCard label="Churn Rate" value={churnRate} loading={statsLoading} accent="#F43F5E" />
@@ -863,7 +863,7 @@ export default function SubscriptionsPage() {
               title="Subscribers by Plan"
               subtitle="Subscriber count per plan"
               data={subscriberTrend}
-              color="#192C67"
+              color="#F77B0F"
               name="Subscribers"
             />
           </div>
@@ -1024,7 +1024,7 @@ export default function SubscriptionsPage() {
                 type="checkbox"
                 checked={form.isGlobal}
                 onChange={(e) => setForm({ ...form, isGlobal: e.target.checked, orgId: e.target.checked ? '' : form.orgId })}
-                className="rounded accent-[#192C67]"
+                className="rounded accent-[#F77B0F]"
               />
               <span className="text-sm font-medium">Global Plan</span>
             </label>
@@ -1033,7 +1033,7 @@ export default function SubscriptionsPage() {
                 type="checkbox"
                 checked={form.isActive}
                 onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
-                className="rounded accent-[#192C67]"
+                className="rounded accent-[#F77B0F]"
               />
               <span className="text-sm font-medium">Active</span>
             </label>
@@ -1062,7 +1062,7 @@ export default function SubscriptionsPage() {
             <button
               onClick={handleSave}
               disabled={actionLoading}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-[#192C67] hover:bg-[#0f1e47] text-white text-sm font-semibold disabled:opacity-50 transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-[#F77B0F] hover:bg-[#0f1e47] text-white text-sm font-semibold disabled:opacity-50 transition-colors shadow-sm"
             >
               {actionLoading ? (
                 <>

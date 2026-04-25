@@ -87,11 +87,11 @@ function StepIndicator({ step, total }: { step: number; total: number }) {
         <div key={i} className="flex items-center">
           <div className="flex flex-col items-center">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-              i < step ? 'bg-[#F77B0F] text-white' : i === step ? 'bg-[#192C67] text-white' : 'bg-gray-100 dark:bg-white/10 text-gray-400'
+              i < step ? 'bg-[#F77B0F] text-white' : i === step ? 'bg-[#F77B0F] text-white' : 'bg-gray-100 dark:bg-white/10 text-gray-400'
             }`}>
               {i < step ? '✓' : i + 1}
             </div>
-            <span className={`text-[10px] mt-1 font-medium ${i === step ? 'text-[#192C67] dark:text-white' : 'text-gray-400'}`}>{label}</span>
+            <span className={`text-[10px] mt-1 font-medium ${i === step ? 'text-[#F77B0F] dark:text-white' : 'text-gray-400'}`}>{label}</span>
           </div>
           {i < total - 1 && <div className={`w-12 h-0.5 mb-4 mx-1 ${i < step ? 'bg-[#F77B0F]' : 'bg-gray-200 dark:bg-white/10'}`} />}
         </div>
@@ -464,7 +464,7 @@ export default function NewCoursePage() {
                 </div>
               ))}
               {info.whatYoullLearn.length < 8 && (
-                <button onClick={() => setInfo(ii => ({ ...ii, whatYoullLearn: [...ii.whatYoullLearn, ''] }))} className="text-xs text-[#192C67] dark:text-blue-400 font-medium hover:underline">+ Add outcome</button>
+                <button onClick={() => setInfo(ii => ({ ...ii, whatYoullLearn: [...ii.whatYoullLearn, ''] }))} className="text-xs text-[#F77B0F] dark:text-blue-400 font-medium hover:underline">+ Add outcome</button>
               )}
             </div>
           </div>
@@ -481,7 +481,7 @@ export default function NewCoursePage() {
                 </div>
               ))}
               {info.prerequisites.length < 6 && (
-                <button onClick={() => setInfo(ii => ({ ...ii, prerequisites: [...ii.prerequisites, ''] }))} className="text-xs text-[#192C67] dark:text-blue-400 font-medium hover:underline">+ Add prerequisite</button>
+                <button onClick={() => setInfo(ii => ({ ...ii, prerequisites: [...ii.prerequisites, ''] }))} className="text-xs text-[#F77B0F] dark:text-blue-400 font-medium hover:underline">+ Add prerequisite</button>
               )}
             </div>
           </div>
@@ -502,14 +502,14 @@ export default function NewCoursePage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-bold text-gray-900 dark:text-white">Curriculum — Modules & Lessons</h2>
-            <button onClick={addModule} className="px-3 py-1.5 text-xs font-medium border border-[#192C67] dark:border-white/20 text-[#192C67] dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-white/10">+ Add Module</button>
+            <button onClick={addModule} className="px-3 py-1.5 text-xs font-medium border border-[#F77B0F] dark:border-white/20 text-[#F77B0F] dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-white/10">+ Add Module</button>
           </div>
 
           {modules.map((mod, mi) => (
             <div key={mod._key} className="border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden">
               {/* Module header */}
               <div className="bg-gray-50 dark:bg-white/5 px-4 py-3 flex gap-3 items-start">
-                <div className="w-7 h-7 rounded-lg bg-[#192C67] text-white text-xs font-black flex items-center justify-center shrink-0">{mi + 1}</div>
+                <div className="w-7 h-7 rounded-lg bg-[#F77B0F] text-white text-xs font-black flex items-center justify-center shrink-0">{mi + 1}</div>
                 <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <input value={mod.title} onChange={e => updateModule(mod._key, { title: e.target.value })} className={ic + ' !bg-white dark:!bg-white/10'} placeholder={`Module ${mi + 1} title`} />
                   <div className="flex items-center gap-2">
@@ -684,7 +684,7 @@ export default function NewCoursePage() {
             {/* Preset tiles */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
-                { id: 'PROFESSIONAL', label: 'Professional', sub: 'Navy + Gold', colors: 'from-[#192C67] to-[#1a3480]', accent: 'text-yellow-300' },
+                { id: 'PROFESSIONAL', label: 'Professional', sub: 'Navy + Gold', colors: 'from-[#F77B0F] to-[#1a3480]', accent: 'text-yellow-300' },
                 { id: 'MODERN', label: 'Modern', sub: 'White + Orange', colors: 'from-white to-gray-50', accent: 'text-[#F77B0F]', dark: true },
                 { id: 'CLASSIC', label: 'Classic', sub: 'Cream + Seal', colors: 'from-amber-50 to-yellow-100', accent: 'text-amber-800', dark: true },
                 { id: 'CUSTOM', label: 'Custom Upload', sub: 'Your own template', colors: 'from-gray-100 to-gray-200 dark:from-white/5 dark:to-white/10', accent: 'text-gray-500', icon: true },
@@ -803,7 +803,7 @@ export default function NewCoursePage() {
               <button onClick={() => handleSave('DRAFT')} disabled={saving} className="px-4 py-2.5 text-sm font-medium border border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-white/10 disabled:opacity-50">
                 {saving ? '…' : 'Save Draft'}
               </button>
-              <button onClick={() => handleSave('UNDER_REVIEW')} disabled={saving} className="px-4 py-2.5 text-sm font-medium border border-[#192C67] dark:border-white/20 text-[#192C67] dark:text-white rounded-lg hover:bg-blue-50 dark:hover:bg-white/10 disabled:opacity-50">
+              <button onClick={() => handleSave('UNDER_REVIEW')} disabled={saving} className="px-4 py-2.5 text-sm font-medium border border-[#F77B0F] dark:border-white/20 text-[#F77B0F] dark:text-white rounded-lg hover:bg-blue-50 dark:hover:bg-white/10 disabled:opacity-50">
                 {saving ? '…' : 'Submit for Review'}
               </button>
               <button onClick={() => handleSave('PUBLISHED')} disabled={saving} className="px-4 py-2.5 text-sm font-medium bg-[#F77B0F] hover:bg-[#e06a00] text-white rounded-lg disabled:opacity-50">
@@ -820,7 +820,7 @@ export default function NewCoursePage() {
           ← Back
         </button>
         {step < STEPS.length - 1 && (
-          <button onClick={() => setStep(s => Math.min(STEPS.length - 1, s + 1))} className="px-5 py-2 text-sm font-medium bg-[#192C67] hover:bg-[#1a3480] text-white rounded-lg">
+          <button onClick={() => setStep(s => Math.min(STEPS.length - 1, s + 1))} className="px-5 py-2 text-sm font-medium bg-[#F77B0F] hover:bg-[#1a3480] text-white rounded-lg">
             Next →
           </button>
         )}
@@ -918,7 +918,7 @@ function LessonRow({ lesson, index, onUpdate, onRemove, canRemove }: {
             <button
               type="button"
               onClick={() => pickFile('video/*', handleVideoUpload)}
-              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#192C67] hover:bg-[#1a3480] active:scale-95 text-white text-xs font-semibold transition-all cursor-pointer select-none"
+              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F77B0F] hover:bg-[#1a3480] active:scale-95 text-white text-xs font-semibold transition-all cursor-pointer select-none"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
               Upload Video
@@ -937,7 +937,7 @@ function LessonRow({ lesson, index, onUpdate, onRemove, canRemove }: {
             <button
               type="button"
               onClick={() => pickFile('.pdf,.doc,.docx,.ppt,.pptx', handleDocUpload)}
-              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-white/10 hover:border-[#192C67] hover:text-[#192C67] text-gray-500 dark:text-gray-400 text-xs font-semibold transition-all active:scale-95 cursor-pointer"
+              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-white/10 hover:border-[#F77B0F] hover:text-[#F77B0F] text-gray-500 dark:text-gray-400 text-xs font-semibold transition-all active:scale-95 cursor-pointer"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
               {lesson.videoUrl ? 'Doc attached' : 'Attach Doc'}
@@ -989,13 +989,13 @@ function LessonRow({ lesson, index, onUpdate, onRemove, canRemove }: {
                 <label className="text-xs text-gray-500">Text Content</label>
                 <div className="flex items-center gap-3">
                   <span className="text-xs text-gray-400">{readingTime(lesson.textContent)} min read</span>
-                  <button type="button" onClick={() => pickFile('.pdf,.doc,.docx,.ppt,.pptx', handleDocUpload)} disabled={docUploading} className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-white/10 text-gray-500 hover:text-[#192C67] hover:border-[#192C67] disabled:opacity-50">
+                  <button type="button" onClick={() => pickFile('.pdf,.doc,.docx,.ppt,.pptx', handleDocUpload)} disabled={docUploading} className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-white/10 text-gray-500 hover:text-[#F77B0F] hover:border-[#F77B0F] disabled:opacity-50">
                     {docUploading ? 'Uploading…' : '↑ Upload Doc'}
                   </button>
                 </div>
               </div>
               <textarea rows={6} value={lesson.textContent} onChange={e => onUpdate({ textContent: e.target.value })} className={ic + ' resize-none font-mono text-xs'} placeholder="Full lesson content — markdown supported…" />
-              {lesson.videoUrl && <p className="text-xs text-gray-400 mt-1">Attached doc: <a href={lesson.videoUrl} target="_blank" rel="noreferrer" className="text-[#192C67] dark:text-blue-400 underline truncate">{lesson.videoUrl.split('/').pop()}</a></p>}
+              {lesson.videoUrl && <p className="text-xs text-gray-400 mt-1">Attached doc: <a href={lesson.videoUrl} target="_blank" rel="noreferrer" className="text-[#F77B0F] dark:text-blue-400 underline truncate">{lesson.videoUrl.split('/').pop()}</a></p>}
             </div>
           )}
 
@@ -1062,7 +1062,7 @@ function QuizBuilder({ lesson, moduleName, onAddQuestion, onRemoveQuestion, onUp
           <p className="text-sm font-bold text-gray-900 dark:text-white">{lesson.title || 'Untitled lesson'}</p>
           <p className="text-xs text-gray-500">{moduleName} · {lesson.contentType} · {lesson.questions.length} question{lesson.questions.length !== 1 ? 's' : ''}</p>
         </div>
-        <button onClick={onAddQuestion} className="text-xs font-medium px-3 py-1.5 border border-[#192C67] dark:border-white/20 text-[#192C67] dark:text-white rounded-lg hover:bg-blue-50 dark:hover:bg-white/10">+ Question</button>
+        <button onClick={onAddQuestion} className="text-xs font-medium px-3 py-1.5 border border-[#F77B0F] dark:border-white/20 text-[#F77B0F] dark:text-white rounded-lg hover:bg-blue-50 dark:hover:bg-white/10">+ Question</button>
       </div>
 
       <div className="p-4 space-y-4">
@@ -1094,7 +1094,7 @@ function QuizBuilder({ lesson, moduleName, onAddQuestion, onRemoveQuestion, onUp
                   </div>
                 ))}
                 {q.options.length < 6 && (
-                  <button onClick={() => onUpdateQuestion(q._key, { options: [...q.options, ''] })} className="text-xs text-[#192C67] dark:text-blue-400 hover:underline">+ Add option</button>
+                  <button onClick={() => onUpdateQuestion(q._key, { options: [...q.options, ''] })} className="text-xs text-[#F77B0F] dark:text-blue-400 hover:underline">+ Add option</button>
                 )}
               </div>
             )}

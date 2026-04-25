@@ -167,16 +167,16 @@ function generateStatement(title: string, rows: { date: string; description: str
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; color: #1e293b; padding: 40px; max-width: 900px; margin: 0 auto; }
-  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; border-bottom: 3px solid #192C67; padding-bottom: 20px; }
-  .logo { font-size: 24px; font-weight: 900; color: #192C67; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; border-bottom: 3px solid #F77B0F; padding-bottom: 20px; }
+  .logo { font-size: 24px; font-weight: 900; color: #F77B0F; }
   .logo small { display: block; font-size: 11px; font-weight: 400; color: #64748b; letter-spacing: 1px; }
   .title { text-align: right; }
-  .title h1 { font-size: 22px; color: #192C67; }
+  .title h1 { font-size: 22px; color: #F77B0F; }
   .title .date { font-size: 12px; color: #64748b; margin-top: 4px; }
   .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
   .summary-card { padding: 12px 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
   .summary-card .label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; }
-  .summary-card .val { font-size: 18px; font-weight: 800; color: #192C67; margin-top: 2px; }
+  .summary-card .val { font-size: 18px; font-weight: 800; color: #F77B0F; margin-top: 2px; }
   table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; }
   th { background: #f1f5f9; text-align: left; padding: 8px 10px; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; border-bottom: 2px solid #e2e8f0; }
   td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
@@ -190,11 +190,11 @@ function generateStatement(title: string, rows: { date: string; description: str
   .badge-FAILED, .badge-REJECTED, .badge-FROZEN { background: #fef2f2; color: #991b1b; }
   .badge-REFUNDED { background: #ede9fe; color: #6d28d9; }
   .footer { margin-top: 30px; padding-top: 16px; border-top: 1px solid #e2e8f0; text-align: center; color: #94a3b8; font-size: 11px; }
-  .total-row td { font-weight: 800; border-top: 2px solid #192C67; font-size: 14px; }
+  .total-row td { font-weight: 800; border-top: 2px solid #F77B0F; font-size: 14px; }
   @media print { body { padding: 20px; } .no-print { display: none !important; } }
 </style></head><body>
   <div class="no-print" style="margin-bottom:16px;text-align:right">
-    <button onclick="window.print()" style="padding:10px 24px;background:#192C67;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px">Print / Save as PDF</button>
+    <button onclick="window.print()" style="padding:10px 24px;background:#F77B0F;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px">Print / Save as PDF</button>
   </div>
   <div class="header">
     <div class="logo">SkillSasa<small>LEARN, GROW, SUCCEED</small></div>
@@ -1012,7 +1012,7 @@ export default function PaymentsPage() {
             onClick={() => setActiveTab(tab.id)}
             className={`inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
               activeTab === tab.id
-                ? 'bg-[#192C67] text-white shadow-sm'
+                ? 'bg-[#F77B0F] text-white shadow-sm'
                 : 'text-muted-foreground hover:bg-muted/80'
             }`}
           >
@@ -1034,7 +1034,7 @@ export default function PaymentsPage() {
           {/* Stats Cards */}
           {stats && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
-              <MetricCard label="Total Payments" value={formatCurrency(stats.totalAmount)} sub={`${stats.totalPayments} payments`} accent="#192C67" />
+              <MetricCard label="Total Payments" value={formatCurrency(stats.totalAmount)} sub={`${stats.totalPayments} payments`} accent="#F77B0F" />
               <MetricCard label="Successful" value={formatCurrency(stats.completedAmount)} sub={`${stats.completedCount} payments`} accent="#10B981" />
               <MetricCard label="Pending" value={formatCurrency(stats.pendingAmount)} sub={`${stats.pendingCount} payments`} accent="#F59E0B" />
               <MetricCard label="Processing" value={formatCurrency(stats.processingAmount)} sub={`${stats.processingCount} payments`} accent="#06B6D4" />
@@ -1263,7 +1263,7 @@ export default function PaymentsPage() {
         <>
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
-            <MetricCard label="Total in Escrow" value={formatCurrency(escrowTotalAmount)} accent="#192C67" />
+            <MetricCard label="Total in Escrow" value={formatCurrency(escrowTotalAmount)} accent="#F77B0F" />
             <MetricCard label="Funded / Held" value={escrowPendingCount} accent="#F59E0B" />
             <MetricCard label="Released" value={escrowReleasedCount} accent="#10B981" />
             <MetricCard label="Frozen" value={escrowFrozenCount} accent="#F43F5E" />
@@ -1585,7 +1585,7 @@ export default function PaymentsPage() {
                     setPayoutCompleteModal(false);
                   }}
                   disabled={payoutActionLoading}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg bg-[#192C67] hover:bg-[#0f1e47] text-white disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg bg-[#F77B0F] hover:bg-[#0f1e47] text-white disabled:opacity-50"
                 >
                   {payoutActionLoading ? 'Completing...' : 'Mark Complete'}
                 </button>

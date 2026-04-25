@@ -21,7 +21,7 @@ function MetricCard({ label, value, accent }: { label: string; value: string; ac
   );
 }
 
-const ic = 'w-full px-3 py-2 rounded-lg border border-border bg-card text-card-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#192C67]/30';
+const ic = 'w-full px-3 py-2 rounded-lg border border-border bg-card text-card-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#F77B0F]/30';
 
 export default function TransactionsPage() {
   const { addToast } = useToast();
@@ -103,7 +103,7 @@ export default function TransactionsPage() {
       render: (w) => {
         const u = w.user;
         return (
-          <div className="w-9 h-9 rounded-full bg-[#192C67]/10 text-[#192C67] dark:bg-[#192C67]/20 dark:text-blue-300 flex items-center justify-center text-xs font-semibold">
+          <div className="w-9 h-9 rounded-full bg-[#F77B0F]/10 text-[#F77B0F] dark:bg-[#F77B0F]/20 dark:text-blue-300 flex items-center justify-center text-xs font-semibold">
             {getInitials(u?.firstName, u?.lastName)}
           </div>
         );
@@ -181,7 +181,7 @@ export default function TransactionsPage() {
             setFundForm({ userId: w.userId, amount: 0, description: '' });
             setFundModal(true);
           }}
-          className="px-3 py-1 text-xs font-medium rounded-lg bg-[#192C67]/10 text-[#192C67] dark:text-blue-300 hover:bg-[#192C67]/20 transition-colors"
+          className="px-3 py-1 text-xs font-medium rounded-lg bg-[#F77B0F]/10 text-[#F77B0F] dark:text-blue-300 hover:bg-[#F77B0F]/20 transition-colors"
         >
           Fund
         </button>
@@ -237,7 +237,7 @@ export default function TransactionsPage() {
               setFundForm({ userId: '', amount: 0, description: '' });
               setFundModal(true);
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#192C67] hover:bg-[#0f1e47] text-white text-sm font-semibold transition-colors shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F77B0F] hover:bg-[#0f1e47] text-white text-sm font-semibold transition-colors shadow-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -250,7 +250,7 @@ export default function TransactionsPage() {
       {/* Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <MetricCard label="Total Wallets" value={formatNumber(wallets.length)} />
-        <MetricCard label="Total Balance" value={formatCurrency(totalBalance)} accent="#192C67" />
+        <MetricCard label="Total Balance" value={formatCurrency(totalBalance)} accent="#F77B0F" />
         <MetricCard label="Total On Hold" value={formatCurrency(totalHeld)} accent="#F59E0B" />
       </div>
 
@@ -277,9 +277,9 @@ export default function TransactionsPage() {
           <div>
             <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">User*</label>
             {fundForm.userId ? (
-              <div className="flex items-center justify-between p-3 rounded-lg bg-[#192C67]/5 border border-[#192C67]/20">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-[#F77B0F]/5 border border-[#F77B0F]/20">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-[#192C67]/10 flex items-center justify-center text-[10px] font-bold text-[#192C67]">
+                  <div className="w-8 h-8 rounded-full bg-[#F77B0F]/10 flex items-center justify-center text-[10px] font-bold text-[#F77B0F]">
                     {(() => {
                       const w = wallets.find(w => w.userId === fundForm.userId);
                       const u = w?.user;
@@ -333,7 +333,7 @@ export default function TransactionsPage() {
                           onClick={() => setFundForm({ ...fundForm, userId: w.userId, _search: '' } as any)}
                           className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-muted/50 transition-colors border-b border-border last:border-0"
                         >
-                          <div className="w-7 h-7 rounded-full bg-[#192C67]/10 flex items-center justify-center text-[10px] font-bold text-[#192C67] flex-shrink-0">
+                          <div className="w-7 h-7 rounded-full bg-[#F77B0F]/10 flex items-center justify-center text-[10px] font-bold text-[#F77B0F] flex-shrink-0">
                             {u ? `${u.firstName?.[0] || ''}${u.lastName?.[0] || ''}` : '?'}
                           </div>
                           <div className="min-w-0 flex-1">
@@ -391,7 +391,7 @@ export default function TransactionsPage() {
             <button
               onClick={handleFund}
               disabled={fundLoading}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-[#192C67] hover:bg-[#0f1e47] text-white text-sm font-semibold disabled:opacity-50 transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-[#F77B0F] hover:bg-[#0f1e47] text-white text-sm font-semibold disabled:opacity-50 transition-colors shadow-sm"
             >
               {fundLoading ? (
                 <>
@@ -454,7 +454,7 @@ export default function TransactionsPage() {
 
             {txLoading ? (
               <div className="flex items-center justify-center py-16">
-                <svg className="w-8 h-8 animate-spin text-[#192C67]" fill="none" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 animate-spin text-[#F77B0F]" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={4} />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>

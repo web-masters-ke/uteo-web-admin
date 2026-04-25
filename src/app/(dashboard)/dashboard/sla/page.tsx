@@ -58,7 +58,7 @@ function ProgressBar({ percent, breached }: { percent: number; breached?: boolea
 function MetricCard({ label, value, sub, color }: { label: string; value: string | number; sub?: string; color?: string }) {
   return (
     <div className="bg-card border border-border rounded-xl p-5 relative overflow-hidden">
-      <div className={`absolute top-3 right-3 w-2 h-2 rounded-full ${color || 'bg-[#192C67]'}`} />
+      <div className={`absolute top-3 right-3 w-2 h-2 rounded-full ${color || 'bg-[#F77B0F]'}`} />
       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">{label}</p>
       <p className="text-2xl font-bold tabular-nums text-foreground">{value}</p>
       {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
@@ -69,7 +69,7 @@ function MetricCard({ label, value, sub, color }: { label: string; value: string
 function Spinner() {
   return (
     <div className="flex items-center justify-center py-16">
-      <div className="w-8 h-8 border-2 border-[#192C67] border-t-transparent rounded-full animate-spin" />
+      <div className="w-8 h-8 border-2 border-[#F77B0F] border-t-transparent rounded-full animate-spin" />
     </div>
   );
 }
@@ -119,7 +119,7 @@ export default function SlaPage() {
               label="Compliance"
               value={dashboard.complianceRate !== null ? `${dashboard.complianceRate}%` : '—'}
               sub={`${dashboard.total} total`}
-              color="bg-[#192C67]"
+              color="bg-[#F77B0F]"
             />
           </>
         ) : null}
@@ -133,7 +133,7 @@ export default function SlaPage() {
             onClick={() => setTab(t)}
             className={`px-5 py-2 text-sm font-semibold rounded-lg transition-all capitalize ${
               tab === t
-                ? 'bg-[#192C67] text-white shadow-sm'
+                ? 'bg-[#F77B0F] text-white shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -268,7 +268,7 @@ function PoliciesTab({ onRefreshStats }: { onRefreshStats: () => void }) {
         </h2>
         <button
           onClick={openCreate}
-          className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#192C67] text-white text-sm font-semibold rounded-lg hover:bg-[#14234f] transition-colors"
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#F77B0F] text-white text-sm font-semibold rounded-lg hover:bg-[#e06a0d] transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -323,7 +323,7 @@ function PoliciesTab({ onRefreshStats }: { onRefreshStats: () => void }) {
               <div className="flex items-center gap-1.5 pt-1">
                 <button
                   onClick={() => openEdit(p)}
-                  className="flex-1 py-1.5 text-xs font-semibold rounded-lg bg-[#192C67]/10 text-[#192C67] hover:bg-[#192C67]/20 dark:text-blue-400 transition-colors"
+                  className="flex-1 py-1.5 text-xs font-semibold rounded-lg bg-[#F77B0F]/10 text-[#F77B0F] hover:bg-[#F77B0F]/20 dark:text-blue-400 transition-colors"
                 >
                   Edit
                 </button>
@@ -391,7 +391,7 @@ function PoliciesTab({ onRefreshStats }: { onRefreshStats: () => void }) {
               value={form.name}
               onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
               placeholder="e.g. Standard Resolution · Premium SLA"
-              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#192C67] outline-none"
+              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#F77B0F] outline-none"
             />
           </div>
 
@@ -402,7 +402,7 @@ function PoliciesTab({ onRefreshStats }: { onRefreshStats: () => void }) {
               value={form.description}
               onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
               placeholder="Optional description of when this policy applies"
-              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#192C67] outline-none resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#F77B0F] outline-none resize-none"
             />
           </div>
 
@@ -416,8 +416,8 @@ function PoliciesTab({ onRefreshStats }: { onRefreshStats: () => void }) {
                   onClick={() => setForm(f => ({ ...f, priority: p }))}
                   className={`py-2 text-xs font-bold rounded-lg border transition-all ${
                     form.priority === p
-                      ? 'border-[#192C67] bg-[#192C67] text-white'
-                      : 'border-border text-muted-foreground hover:border-[#192C67]/50'
+                      ? 'border-[#F77B0F] bg-[#F77B0F] text-white'
+                      : 'border-border text-muted-foreground hover:border-[#F77B0F]/50'
                   }`}
                 >
                   {p}
@@ -434,7 +434,7 @@ function PoliciesTab({ onRefreshStats }: { onRefreshStats: () => void }) {
                 min={1}
                 value={form.firstResponseHours}
                 onChange={e => setForm(f => ({ ...f, firstResponseHours: Number(e.target.value) }))}
-                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#192C67] outline-none"
+                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#F77B0F] outline-none"
               />
             </div>
             <div>
@@ -444,7 +444,7 @@ function PoliciesTab({ onRefreshStats }: { onRefreshStats: () => void }) {
                 min={1}
                 value={form.resolutionHours}
                 onChange={e => setForm(f => ({ ...f, resolutionHours: Number(e.target.value) }))}
-                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#192C67] outline-none"
+                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#F77B0F] outline-none"
               />
             </div>
           </div>
@@ -458,7 +458,7 @@ function PoliciesTab({ onRefreshStats }: { onRefreshStats: () => void }) {
                 max={99}
                 value={form.warningPercent}
                 onChange={e => setForm(f => ({ ...f, warningPercent: Number(e.target.value) }))}
-                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#192C67] outline-none"
+                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#F77B0F] outline-none"
               />
               <p className="text-[10px] text-muted-foreground mt-0.5">Send warning when this % of time elapsed</p>
             </div>
@@ -467,7 +467,7 @@ function PoliciesTab({ onRefreshStats }: { onRefreshStats: () => void }) {
               <button
                 type="button"
                 onClick={() => setForm(f => ({ ...f, autoEscalate: !f.autoEscalate }))}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.autoEscalate ? 'bg-[#192C67]' : 'bg-gray-300 dark:bg-gray-600'}`}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.autoEscalate ? 'bg-[#F77B0F]' : 'bg-gray-300 dark:bg-gray-600'}`}
               >
                 <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.autoEscalate ? 'translate-x-6' : 'translate-x-1'}`} />
               </button>
@@ -498,8 +498,8 @@ function PoliciesTab({ onRefreshStats }: { onRefreshStats: () => void }) {
                         onClick={() => setForm(f => ({ ...f, [field]: role }))}
                         className={`py-1.5 text-[11px] font-bold rounded-lg border transition-all ${
                           form[field] === role
-                            ? 'border-[#192C67] bg-[#192C67] text-white'
-                            : 'border-border text-muted-foreground hover:border-[#192C67]/50 bg-background'
+                            ? 'border-[#F77B0F] bg-[#F77B0F] text-white'
+                            : 'border-border text-muted-foreground hover:border-[#F77B0F]/50 bg-background'
                         }`}
                       >
                         {role === 'FINANCE_ADMIN' ? 'Finance' : role === 'SUPER_ADMIN' ? 'Super Admin' : role === 'ADMIN' ? 'Admin' : 'Support'}
@@ -522,7 +522,7 @@ function PoliciesTab({ onRefreshStats }: { onRefreshStats: () => void }) {
             <button
               onClick={submitForm}
               disabled={busy}
-              className="px-5 py-2 text-sm font-semibold rounded-lg bg-[#192C67] text-white hover:bg-[#14234f] disabled:opacity-50 flex items-center gap-2"
+              className="px-5 py-2 text-sm font-semibold rounded-lg bg-[#F77B0F] text-white hover:bg-[#e06a0d] disabled:opacity-50 flex items-center gap-2"
             >
               {busy && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
               {editTarget ? 'Save Changes' : 'Create Policy'}
@@ -636,7 +636,7 @@ function AssignmentsTab({ onRefreshStats }: { onRefreshStats: () => void }) {
               onClick={() => { setStatusFilter(s); setPage(1); }}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
                 statusFilter === s
-                  ? 'bg-[#192C67] text-white'
+                  ? 'bg-[#F77B0F] text-white'
                   : 'bg-muted text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -858,7 +858,7 @@ function ReportsTab() {
             type="date"
             value={from}
             onChange={e => setFrom(e.target.value)}
-            className="px-3 py-1.5 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#192C67] outline-none"
+            className="px-3 py-1.5 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#F77B0F] outline-none"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -867,7 +867,7 @@ function ReportsTab() {
             type="date"
             value={to}
             onChange={e => setTo(e.target.value)}
-            className="px-3 py-1.5 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#192C67] outline-none"
+            className="px-3 py-1.5 rounded-lg border border-input bg-background text-sm text-foreground focus:ring-2 focus:ring-[#F77B0F] outline-none"
           />
         </div>
         <button
@@ -877,7 +877,7 @@ function ReportsTab() {
           Clear
         </button>
         {loading && (
-          <div className="w-5 h-5 border-2 border-[#192C67] border-t-transparent rounded-full animate-spin ml-2" />
+          <div className="w-5 h-5 border-2 border-[#F77B0F] border-t-transparent rounded-full animate-spin ml-2" />
         )}
       </div>
 
@@ -885,7 +885,7 @@ function ReportsTab() {
         <>
           {/* Summary metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            <MetricCard label="Total" value={s.total} color="bg-[#192C67]" />
+            <MetricCard label="Total" value={s.total} color="bg-[#F77B0F]" />
             <MetricCard label="Met" value={s.met} color="bg-green-500" />
             <MetricCard label="Breached" value={s.breached} color="bg-red-500" />
             <MetricCard label="Active" value={s.active} color="bg-blue-500" />
@@ -933,7 +933,7 @@ function ReportsTab() {
                       </div>
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                         <div
-                          className="bg-[#192C67] h-1.5 rounded-full"
+                          className="bg-[#F77B0F] h-1.5 rounded-full"
                           style={{ width: s.total > 0 ? `${Math.round((bp.count / s.total) * 100)}%` : '0%' }}
                         />
                       </div>

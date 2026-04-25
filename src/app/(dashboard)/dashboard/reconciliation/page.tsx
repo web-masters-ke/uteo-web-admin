@@ -179,7 +179,7 @@ export default function ReconciliationPage() {
         <button
           onClick={handleGenerate}
           disabled={loading}
-          className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-[#192C67] hover:bg-[#0f1e47] text-white text-sm font-semibold disabled:opacity-50 transition-colors shadow-sm"
+          className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-[#F77B0F] hover:bg-[#0f1e47] text-white text-sm font-semibold disabled:opacity-50 transition-colors shadow-sm"
         >
           {loading ? (
             <>

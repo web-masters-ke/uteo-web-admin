@@ -63,7 +63,7 @@ export default function LoginPage() {
           </div>
 
           <h1 className="text-3xl font-black text-gray-900 text-center mb-1">Admin Login</h1>
-          <p className="text-gray-500 text-sm text-center mb-9">Sign in to the SkillSasa admin dashboard</p>
+          <p className="text-gray-500 text-sm text-center mb-9">Sign in to the Uteo admin dashboard</p>
 
           <form onSubmit={onSubmit} className="space-y-5">
             <div>
@@ -108,7 +108,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-transparent border-2 border-[#192C67] hover:bg-[#192C67]/8 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-[#192C67] font-black rounded-xl transition-all text-sm uppercase tracking-widest mt-1"
+              className="w-full py-4 bg-[#F77B0F] hover:bg-[#e06a0d] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-black rounded-xl transition-all text-sm uppercase tracking-widest mt-1 shadow-sm"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -121,7 +121,7 @@ export default function LoginPage() {
 
           <div className="mt-7 pt-6 border-t border-gray-200">
             <div className="flex flex-wrap gap-1.5 justify-center">
-              {['Trainers', 'Bookings', 'Escrow', 'Wallets', 'Subscriptions', 'Analytics'].map(f => (
+              {['Candidates', 'Interviews', 'Jobs', 'Analytics', 'AI Engine', 'Finance'].map(f => (
                 <span key={f} className="px-2.5 py-1 rounded-full border border-gray-400 text-[10px] font-bold text-gray-600 uppercase tracking-wider">{f}</span>
               ))}
             </div>
@@ -129,7 +129,7 @@ export default function LoginPage() {
 
         </div>
 
-        <p className="text-center text-white/40 text-[11px] mt-5 uppercase tracking-widest drop-shadow">SkillSasa Platform v2.0 · Admin Access Only</p>
+        <p className="text-center text-white/40 text-[11px] mt-5 uppercase tracking-widest drop-shadow">Uteo Platform · Admin Access Only</p>
       </div>
 
       {/* Logo pinned to bottom-left of the page */}

@@ -119,7 +119,7 @@ export default function WalletsPage() {
         actions={
           <button
             onClick={() => { setBulkModal(true); setAmount('1000000'); setDescription('Starter credit'); }}
-            className="px-4 py-2 bg-[#192C67] hover:bg-[#1a3480] text-white text-sm font-medium rounded-lg transition-colors"
+            className="px-4 py-2 bg-[#F77B0F] hover:bg-[#1a3480] text-white text-sm font-medium rounded-lg transition-colors"
           >
             Bulk Top Up All
           </button>
@@ -132,7 +132,7 @@ export default function WalletsPage() {
           placeholder="Search by name or email…"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full max-w-sm px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#192C67]"
+          className="w-full max-w-sm px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F77B0F]"
         />
       </div>
 
@@ -159,7 +159,7 @@ export default function WalletsPage() {
               value={amount}
               onChange={e => setAmount(e.target.value)}
               placeholder="e.g. 1000000"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#192C67]"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F77B0F]"
             />
           </div>
           <div>
@@ -169,7 +169,7 @@ export default function WalletsPage() {
               value={description}
               onChange={e => setDescription(e.target.value)}
               placeholder="e.g. Starter credit"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#192C67]"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F77B0F]"
             />
           </div>
           <div className="flex gap-3 pt-2">
@@ -200,7 +200,7 @@ export default function WalletsPage() {
               min="1"
               value={amount}
               onChange={e => setAmount(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#192C67]"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F77B0F]"
             />
           </div>
           <div>
@@ -209,7 +209,7 @@ export default function WalletsPage() {
               type="text"
               value={description}
               onChange={e => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#192C67]"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F77B0F]"
             />
           </div>
           <div className="flex gap-3 pt-2">
@@ -219,7 +219,7 @@ export default function WalletsPage() {
             <button
               onClick={handleBulkFund}
               disabled={submitting || !amount}
-              className="flex-1 px-4 py-2 bg-[#192C67] hover:bg-[#1a3480] disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors"
+              className="flex-1 px-4 py-2 bg-[#F77B0F] hover:bg-[#1a3480] disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors"
             >
               {submitting ? `Funding ${wallets.length} wallets…` : `Top Up All ${wallets.length} Wallets`}
             </button>

@@ -11,7 +11,7 @@ import { User } from '@/lib/types';
 import { formatNumber, formatDate, getInitials } from '@/lib/utils';
 import { useToast } from '@/lib/toast';
 
-const BRAND = '#192C67';
+const BRAND = '#F77B0F';
 const ORANGE = '#F77B0F';
 
 function MetricCard({
@@ -20,7 +20,7 @@ function MetricCard({
   label: string; value: string | number; sub?: string; dot?: string; href?: string;
 }) {
   const content = (
-    <div className="bg-card border border-border rounded-xl p-5 relative overflow-hidden group-hover:border-[#192C67]/30 transition-colors h-full">
+    <div className="bg-card border border-border rounded-xl p-5 relative overflow-hidden group-hover:border-[#F77B0F]/30 transition-colors h-full">
       <div className="absolute top-3 right-3 w-2 h-2 rounded-full" style={{ background: dot || BRAND }} />
       <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 pr-4">{label}</p>
       <p className="text-2xl font-bold tabular-nums text-foreground leading-none">{value}</p>
@@ -39,7 +39,7 @@ function SectionHeader({ title, sub, href }: { title: string; sub?: string; href
         {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
       </div>
       {href && (
-        <Link href={href} className="text-xs font-semibold text-[#192C67] dark:text-blue-400 hover:underline flex items-center gap-1">
+        <Link href={href} className="text-xs font-semibold text-[#F77B0F] dark:text-blue-400 hover:underline flex items-center gap-1">
           View all
           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
         </Link>
@@ -166,7 +166,7 @@ export default function DashboardPage() {
         <button
           onClick={() => fetchData(true)}
           disabled={refreshing}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-[#192C67] text-white text-sm font-semibold rounded-lg hover:bg-[#14234f] transition-colors disabled:opacity-60"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-[#F77B0F] text-white text-sm font-semibold rounded-lg hover:bg-[#e06a0d] transition-colors disabled:opacity-60"
         >
           <svg className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -203,7 +203,7 @@ export default function DashboardPage() {
           title="Applications by Status"
           subtitle="Breakdown of current application statuses"
           data={appStatusDonut.length > 0 ? appStatusDonut : [{ name: 'No data', value: 1 }]}
-          colors={['#F77B0F', '#192C67', '#10b981', '#8b5cf6', '#ef4444', '#06b6d4']}
+          colors={['#F77B0F', '#F77B0F', '#10b981', '#8b5cf6', '#ef4444', '#06b6d4']}
           height={280}
         />
       </div>
@@ -240,7 +240,7 @@ export default function DashboardPage() {
               {recentJobs.map(job => (
                 <Link key={job.id} href={`/dashboard/jobs/${job.id}`} className="flex items-center justify-between px-5 py-3 hover:bg-muted/40 transition-colors">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="w-8 h-8 rounded-lg bg-[#192C67]/10 text-[#192C67] flex items-center justify-center text-xs font-bold flex-shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-[#F77B0F]/10 text-[#F77B0F] flex items-center justify-center text-xs font-bold flex-shrink-0">
                       {job.company?.name?.[0]?.toUpperCase() || 'J'}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -335,7 +335,7 @@ export default function DashboardPage() {
             {recentUsers.map(u => (
               <Link key={u.id} href={`/dashboard/users/${u.id}`} className="flex items-center justify-between px-5 py-3 hover:bg-muted/40 transition-colors">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="w-8 h-8 rounded-full bg-[#192C67]/10 text-[#192C67] flex items-center justify-center text-xs font-bold flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-[#F77B0F]/10 text-[#F77B0F] flex items-center justify-center text-xs font-bold flex-shrink-0">
                     {getInitials(u.firstName, u.lastName)}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -361,10 +361,10 @@ export default function DashboardPage() {
             <Link
               key={ql.href}
               href={ql.href}
-              className="flex flex-col items-center gap-2 p-3 bg-card border border-border rounded-xl hover:border-[#192C67]/40 hover:bg-[#192C67]/5 transition-all group text-center"
+              className="flex flex-col items-center gap-2 p-3 bg-card border border-border rounded-xl hover:border-[#F77B0F]/40 hover:bg-[#F77B0F]/5 transition-all group text-center"
             >
-              <div className="w-9 h-9 rounded-lg bg-[#192C67]/8 flex items-center justify-center group-hover:bg-[#192C67]/15 transition-colors">
-                <svg className="w-5 h-5 text-[#192C67] dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+              <div className="w-9 h-9 rounded-lg bg-[#F77B0F]/8 flex items-center justify-center group-hover:bg-[#F77B0F]/15 transition-colors">
+                <svg className="w-5 h-5 text-[#F77B0F] dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
                   <path strokeLinecap="round" strokeLinejoin="round" d={ql.icon} />
                 </svg>
               </div>

@@ -620,7 +620,7 @@ export default function CommissionsPage() {
       render: (r) => {
         const rate = Number(r.commissionRate ?? r.rate ?? 0);
         return (
-          <span className="font-bold text-lg text-[#192C67] dark:text-blue-400">
+          <span className="font-bold text-lg text-[#F77B0F] dark:text-blue-400">
             {(rate * 100).toFixed(1)}%
           </span>
         );
@@ -827,7 +827,7 @@ export default function CommissionsPage() {
           tab === 'rules' ? (
             <button
               onClick={openCreateModal}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#192C67] hover:bg-[#0f1e47] text-white text-sm font-semibold transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F77B0F] hover:bg-[#0f1e47] text-white text-sm font-semibold transition-colors shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -846,7 +846,7 @@ export default function CommissionsPage() {
             onClick={() => setTab(t.key)}
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
               tab === t.key
-                ? 'bg-[#192C67] text-white shadow-sm'
+                ? 'bg-[#F77B0F] text-white shadow-sm'
                 : 'text-muted-foreground hover:text-card-foreground hover:bg-muted/80'
             }`}
           >
@@ -861,7 +861,7 @@ export default function CommissionsPage() {
           {/* Rules Stats */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
             <MetricCard label="Active Rules" value={activeRulesCount} accent="#10B981" />
-            <MetricCard label="Default Rate" value={`${(defaultRate * 100).toFixed(1)}%`} accent="#192C67" />
+            <MetricCard label="Default Rate" value={`${(defaultRate * 100).toFixed(1)}%`} accent="#F77B0F" />
             <MetricCard label="Org-Specific" value={orgSpecificCount} />
             <MetricCard label="Lowest Rate" value={rates.length > 0 ? `${(lowestRate * 100).toFixed(1)}%` : 'N/A'} accent="#06B6D4" />
             <MetricCard label="Highest Rate" value={rates.length > 0 ? `${(highestRate * 100).toFixed(1)}%` : 'N/A'} accent="#F77B0F" />
@@ -883,7 +883,7 @@ export default function CommissionsPage() {
           {/* Records Stats */}
           {!statsLoading && stats && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <MetricCard label="Total Commission" value={formatCurrency(Number(stats.totalCommission))} sub="Platform revenue" accent="#192C67" />
+              <MetricCard label="Total Commission" value={formatCurrency(Number(stats.totalCommission))} sub="Platform revenue" accent="#F77B0F" />
               <MetricCard label="This Month" value={formatCurrency(Number(stats.thisMonth || stats.last30Days?.commission || 0))} sub={`${stats.last30Days?.count || 0} records`} accent="#10B981" />
               <MetricCard label="Average Rate" value={`${((Number(stats.averageRate) || 0) * 100).toFixed(1)}%`} sub="Across all records" />
               <MetricCard label="Total Records" value={stats.totalRecords} />
@@ -1237,7 +1237,7 @@ export default function CommissionsPage() {
                   title="Commission Revenue Trend"
                   subtitle="Monthly platform commission revenue"
                   data={analytics.revenueTrend}
-                  color="#192C67"
+                  color="#F77B0F"
                   name="Commission"
                   height={280}
                 />
@@ -1574,7 +1574,7 @@ export default function CommissionsPage() {
             <button
               onClick={handleSave}
               disabled={saveLoading}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-[#192C67] hover:bg-[#0f1e47] text-white text-sm font-semibold disabled:opacity-50 transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-[#F77B0F] hover:bg-[#0f1e47] text-white text-sm font-semibold disabled:opacity-50 transition-colors shadow-sm"
             >
               {saveLoading ? 'Saving…' : editing ? 'Update Rule' : 'Create Rule'}
             </button>
@@ -1682,7 +1682,7 @@ export default function CommissionsPage() {
             <button
               onClick={handleSetRate}
               disabled={rateModalLoading}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-[#192C67] hover:bg-[#0f1e47] text-white text-sm font-semibold disabled:opacity-50 transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-[#F77B0F] hover:bg-[#0f1e47] text-white text-sm font-semibold disabled:opacity-50 transition-colors shadow-sm"
             >
               {rateModalLoading ? 'Saving…' : 'Set Rate'}
             </button>

@@ -40,7 +40,7 @@ const TIER_CONFIG: Record<string, { label: string; color: string }> = {
 };
 
 const TRAINER_TYPE_CONFIG: Record<string, { label: string; color: string }> = {
-  PROFESSIONAL: { label: 'White Collar', color: 'bg-[#192C67]/10 text-[#192C67] dark:bg-[#192C67]/30 dark:text-[#5b8bc7]' },
+  PROFESSIONAL: { label: 'White Collar', color: 'bg-[#F77B0F]/10 text-[#F77B0F] dark:bg-[#F77B0F]/30 dark:text-[#5b8bc7]' },
   VOCATIONAL: { label: 'Blue Collar', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
   BOTH: { label: 'Both', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
 };
@@ -883,7 +883,7 @@ export default function VerificationsPage() {
                           <td className="px-4 py-3">
                             {trainerType ? (
                               <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                                trainerType === 'PROFESSIONAL' ? 'bg-[#192C67]/10 text-[#192C67] dark:bg-[#192C67]/30 dark:text-[#5b8bc7]' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+                                trainerType === 'PROFESSIONAL' ? 'bg-[#F77B0F]/10 text-[#F77B0F] dark:bg-[#F77B0F]/30 dark:text-[#5b8bc7]' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
                               }`}>
                                 {trainerType === 'PROFESSIONAL' ? 'Professional' : 'Vocational'}
                               </span>

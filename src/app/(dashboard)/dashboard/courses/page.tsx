@@ -42,7 +42,7 @@ const CONTENT_TYPE_BADGE: Record<string, string> = {
 
 type TabKey = 'all' | 'create' | 'analytics';
 
-const ic = 'px-3 py-2 rounded-lg border border-border bg-card text-card-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#192C67]/30';
+const ic = 'px-3 py-2 rounded-lg border border-border bg-card text-card-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#F77B0F]/30';
 
 // ─── Helper: Stars ──────────────────────────────────────────────────────────
 
@@ -86,7 +86,7 @@ function LessonContent({ content }: { content: string }) {
               </div>
             );
           }
-          return <a key={i} href={cleanUrl} target="_blank" rel="noopener noreferrer" className="text-[#192C67] dark:text-[#5b8bc7] hover:underline break-all">{cleanUrl}</a>;
+          return <a key={i} href={cleanUrl} target="_blank" rel="noopener noreferrer" className="text-[#F77B0F] dark:text-[#5b8bc7] hover:underline break-all">{cleanUrl}</a>;
         }
         if (!part.trim()) return null;
         return <p key={i} className="whitespace-pre-wrap leading-relaxed">{part}</p>;
@@ -635,7 +635,7 @@ export default function CoursesPage() {
           {/* Stats row */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
             {[
-              { label: 'Total Courses', value: total, icon: 'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25', color: '#192C67' },
+              { label: 'Total Courses', value: total, icon: 'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25', color: '#F77B0F' },
               { label: 'Published', value: publishedCount, icon: 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z', color: '#0D9488' },
               { label: 'Draft', value: draftCount, icon: 'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10', color: '#F77B0F' },
               { label: 'Total Enrolled', value: totalEnrolled, icon: 'M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z', color: '#8B5CF6' },
@@ -763,7 +763,7 @@ export default function CoursesPage() {
                         {/* Instructor */}
                         {inst && (
                           <div className="flex items-center gap-2 mb-3">
-                            <div className="w-6 h-6 rounded-full bg-[#192C67]/10 flex items-center justify-center text-[10px] font-bold text-[#192C67] dark:text-[#5b8bc7] shrink-0 overflow-hidden">
+                            <div className="w-6 h-6 rounded-full bg-[#F77B0F]/10 flex items-center justify-center text-[10px] font-bold text-[#F77B0F] dark:text-[#5b8bc7] shrink-0 overflow-hidden">
                               {inst.avatar ? <img src={inst.avatar} alt="" className="w-full h-full object-cover" /> : getInitials(inst.name.split(' ')[0], inst.name.split(' ')[1])}
                             </div>
                             <span className="text-xs text-muted-foreground">{inst.name}</span>
@@ -799,7 +799,7 @@ export default function CoursesPage() {
                           <button
                             onClick={() => openDetail(course.id)}
                             disabled={isLoading}
-                            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#192C67]/10 text-[#192C67] dark:bg-[#192C67]/20 dark:text-[#5b8bc7] hover:bg-gray-50 dark:hover:bg-white/10/20 transition-colors disabled:opacity-50"
+                            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#F77B0F]/10 text-[#F77B0F] dark:bg-[#F77B0F]/20 dark:text-[#5b8bc7] hover:bg-gray-50 dark:hover:bg-white/10/20 transition-colors disabled:opacity-50"
                           >
                             View Detail
                           </button>
@@ -887,7 +887,7 @@ export default function CoursesPage() {
                         if (!inst) return null;
                         return (
                           <div className="flex items-center gap-3 mt-4 p-3 bg-muted/50 rounded-lg">
-                            <div className="w-10 h-10 rounded-full bg-[#192C67]/10 flex items-center justify-center text-sm font-bold text-[#192C67] dark:text-[#5b8bc7] shrink-0 overflow-hidden">
+                            <div className="w-10 h-10 rounded-full bg-[#F77B0F]/10 flex items-center justify-center text-sm font-bold text-[#F77B0F] dark:text-[#5b8bc7] shrink-0 overflow-hidden">
                               {inst.avatar ? <img src={inst.avatar} alt="" className="w-full h-full object-cover" /> : getInitials(inst.name.split(' ')[0], inst.name.split(' ')[1])}
                             </div>
                             <div>
@@ -919,7 +919,7 @@ export default function CoursesPage() {
                             >
                               <summary className="flex items-center justify-between p-3 cursor-pointer hover:bg-muted/30 transition-colors list-none">
                                 <div className="flex items-center gap-3">
-                                  <span className="w-7 h-7 flex items-center justify-center rounded-full bg-[#192C67]/10 text-[#192C67] dark:bg-[#192C67]/20 dark:text-[#5b8bc7] text-xs font-bold shrink-0">
+                                  <span className="w-7 h-7 flex items-center justify-center rounded-full bg-[#F77B0F]/10 text-[#F77B0F] dark:bg-[#F77B0F]/20 dark:text-[#5b8bc7] text-xs font-bold shrink-0">
                                     {i + 1}
                                   </span>
                                   <div>
@@ -948,13 +948,13 @@ export default function CoursesPage() {
                               <div className="px-3 pb-3 pt-2 border-t border-border bg-muted/20">
                                 <div className="flex items-center justify-between mb-2">
                                   {lesson.description && <p className="text-xs text-muted-foreground flex-1">{lesson.description}</p>}
-                                  <button onClick={() => openEditLesson(detailCourse.id, lesson)} className="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-[#192C67]/10 text-[#192C67] dark:bg-[#192C67]/20 dark:text-[#5b8bc7] hover:bg-gray-50 dark:hover:bg-white/10/20 transition-colors shrink-0 ml-2">{(lesson.contentType === 'QUIZ' || lesson.type === 'QUIZ') ? 'Edit Quiz & Questions' : 'Edit Lesson'}</button>
+                                  <button onClick={() => openEditLesson(detailCourse.id, lesson)} className="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-[#F77B0F]/10 text-[#F77B0F] dark:bg-[#F77B0F]/20 dark:text-[#5b8bc7] hover:bg-gray-50 dark:hover:bg-white/10/20 transition-colors shrink-0 ml-2">{(lesson.contentType === 'QUIZ' || lesson.type === 'QUIZ') ? 'Edit Quiz & Questions' : 'Edit Lesson'}</button>
                                 </div>
                                 {/* Video */}
                                 {(lesson.contentType === 'VIDEO' || lesson.type === 'VIDEO') && lesson.videoUrl && (
                                   <div className="mb-2">
                                     <video controls className="w-full rounded-lg max-h-[300px] bg-black mb-1" src={lesson.videoUrl}>Your browser does not support video.</video>
-                                    <a href={lesson.videoUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#192C67] hover:underline break-all">{lesson.videoUrl}</a>
+                                    <a href={lesson.videoUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#F77B0F] hover:underline break-all">{lesson.videoUrl}</a>
                                   </div>
                                 )}
                                 {(lesson.contentType === 'VIDEO' || lesson.type === 'VIDEO') && !lesson.videoUrl && (
@@ -994,7 +994,7 @@ export default function CoursesPage() {
                                                 <>
                                                   <div className="flex items-start justify-between gap-2">
                                                     <p className="text-xs font-medium text-card-foreground flex-1">Q{qi + 1}. {q.question}</p>
-                                                    <span className="shrink-0 text-[10px] font-semibold text-[#192C67] dark:text-[#5b8bc7]">{q.points ?? 10}pts</span>
+                                                    <span className="shrink-0 text-[10px] font-semibold text-[#F77B0F] dark:text-[#5b8bc7]">{q.points ?? 10}pts</span>
                                                   </div>
                                                   <p className="text-[10px] text-muted-foreground mt-0.5 mb-1">{typeLabel[q.type || q.questionType] || (q.type || q.questionType)}</p>
                                                   {q.options && Array.isArray(q.options) && q.options.length > 0 && (
@@ -1008,7 +1008,7 @@ export default function CoursesPage() {
                                                       ))}
                                                     </div>
                                                   )}
-                                                  {q.explanation && <p className="text-[10px] text-[#192C67] dark:text-[#5b8bc7] mt-1.5 italic">💡 {q.explanation}</p>}
+                                                  {q.explanation && <p className="text-[10px] text-[#F77B0F] dark:text-[#5b8bc7] mt-1.5 italic">💡 {q.explanation}</p>}
                                                 </>
                                               );
                                             })()}
@@ -1030,7 +1030,7 @@ export default function CoursesPage() {
                               <h3 className="text-sm font-bold text-card-foreground">
                                 Course Content <span className="text-muted-foreground font-normal">({contentLessons.length} lesson{contentLessons.length !== 1 ? 's' : ''})</span>
                               </h3>
-                              <button onClick={() => openAddLesson(detailCourse.id, 'VIDEO')} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-[#192C67] text-[#192C67] dark:border-[#5b8bc7] dark:text-[#5b8bc7] hover:bg-[#192C67]/5 transition-colors">
+                              <button onClick={() => openAddLesson(detailCourse.id, 'VIDEO')} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-[#F77B0F] text-[#F77B0F] dark:border-[#5b8bc7] dark:text-[#5b8bc7] hover:bg-[#F77B0F]/5 transition-colors">
                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
                                 Add Lesson
                               </button>
@@ -1129,7 +1129,7 @@ export default function CoursesPage() {
                           onClick={() => { setSelectedTrainer(t); setShowTrainerDropdown(false); setTrainerSearch(''); }}
                           className="w-full flex items-center gap-3 p-3 hover:bg-muted transition-colors text-left"
                         >
-                          <div className="w-8 h-8 rounded-full bg-[#192C67]/10 flex items-center justify-center text-xs font-bold text-[#192C67] dark:text-[#5b8bc7] shrink-0 overflow-hidden">
+                          <div className="w-8 h-8 rounded-full bg-[#F77B0F]/10 flex items-center justify-center text-xs font-bold text-[#F77B0F] dark:text-[#5b8bc7] shrink-0 overflow-hidden">
                             {t.user?.avatarUrl ? <img src={t.user.avatarUrl} alt="" className="w-full h-full object-cover" /> : getInitials(t.user?.firstName, t.user?.lastName)}
                           </div>
                           <div className="min-w-0">
@@ -1191,7 +1191,7 @@ export default function CoursesPage() {
                     const file = e.target.files?.[0];
                     if (file) { setThumbnailFile(file); setThumbnailPreview(URL.createObjectURL(file)); }
                   }}
-                  className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#192C67]/10 file:text-[#192C67] hover:file:bg-[#192C67]/20"
+                  className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#F77B0F]/10 file:text-[#F77B0F] hover:file:bg-[#F77B0F]/20"
                 />
                 {thumbnailPreview && <img src={thumbnailPreview} alt="Preview" className="mt-2 h-32 rounded-lg object-cover" />}
               </div>
@@ -1282,7 +1282,7 @@ export default function CoursesPage() {
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
                             <label className="text-xs font-medium text-card-foreground">Questions ({lesson._questions.length})</label>
-                            <button onClick={() => addQuestion(li)} className="text-xs font-medium text-[#192C67] dark:text-[#5b8bc7] hover:underline">+ Add Question</button>
+                            <button onClick={() => addQuestion(li)} className="text-xs font-medium text-[#F77B0F] dark:text-[#5b8bc7] hover:underline">+ Add Question</button>
                           </div>
                           {lesson._questions.map((q, qi) => (
                             <div key={qi} className="bg-card rounded-lg border border-border p-3 space-y-2">
@@ -1358,7 +1358,7 @@ export default function CoursesPage() {
                   subtitle="Courses with most enrolled students"
                   data={topCoursesByEnrollment}
                   name="Enrolled"
-                  color="#192C67"
+                  color="#F77B0F"
                 />
                 <DonutBreakdown
                   title="Revenue by Course"
@@ -1511,7 +1511,7 @@ export default function CoursesPage() {
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-card-foreground">Content</label>
                   <textarea rows={6} value={addLessonForm.content} onChange={e => setAddLessonForm(p => ({ ...p, content: e.target.value }))} className={`${ic} w-full resize-none font-mono`} placeholder="Write lesson content..." />
-                  <input type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx" onChange={async e => { const f = e.target.files?.[0]; if (!f) return; try { addToast('info', `Uploading ${f.name}...`); const url = await uploadFile(f); setAddLessonForm(p => ({ ...p, content: p.content + `\n\n📎 ${f.name}\n${url}` })); addToast('success', `${f.name} uploaded`); } catch { addToast('error', 'Upload failed'); } }} className="w-full text-xs text-muted-foreground file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#192C67]/10 file:text-[#192C67] hover:file:bg-[#192C67]/20" />
+                  <input type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx" onChange={async e => { const f = e.target.files?.[0]; if (!f) return; try { addToast('info', `Uploading ${f.name}...`); const url = await uploadFile(f); setAddLessonForm(p => ({ ...p, content: p.content + `\n\n📎 ${f.name}\n${url}` })); addToast('success', `${f.name} uploaded`); } catch { addToast('error', 'Upload failed'); } }} className="w-full text-xs text-muted-foreground file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#F77B0F]/10 file:text-[#F77B0F] hover:file:bg-[#F77B0F]/20" />
                 </div>
               )}
               {addLessonForm.contentType === 'ASSIGNMENT' && (
@@ -1596,7 +1596,7 @@ export default function CoursesPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-card-foreground mb-1">Attachments (PPT, Word, PDF)</label>
-                    <input type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx" onChange={async e => { const f = e.target.files?.[0]; if (f) { try { addToast('info', `Uploading ${f.name}...`); const url = await uploadFile(f); setEditLessonForm(p => ({ ...p, content: p.content + `\n\n📎 ${f.name}\n${url}` })); addToast('success', `${f.name} uploaded`); } catch { addToast('error', 'Upload failed'); } } }} className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#192C67]/10 file:text-[#192C67] hover:file:bg-[#192C67]/20" />
+                    <input type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx" onChange={async e => { const f = e.target.files?.[0]; if (f) { try { addToast('info', `Uploading ${f.name}...`); const url = await uploadFile(f); setEditLessonForm(p => ({ ...p, content: p.content + `\n\n📎 ${f.name}\n${url}` })); addToast('success', `${f.name} uploaded`); } catch { addToast('error', 'Upload failed'); } } }} className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#F77B0F]/10 file:text-[#F77B0F] hover:file:bg-[#F77B0F]/20" />
                   </div>
                 </div>
               )}
@@ -1608,7 +1608,7 @@ export default function CoursesPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-card-foreground mb-1">Reference Files</label>
-                    <input type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx" onChange={async e => { const f = e.target.files?.[0]; if (f) { try { addToast('info', `Uploading ${f.name}...`); const url = await uploadFile(f); setEditLessonForm(p => ({ ...p, content: p.content + `\n\n📎 ${f.name}\n${url}` })); addToast('success', `${f.name} uploaded`); } catch { addToast('error', 'Upload failed'); } } }} className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#192C67]/10 file:text-[#192C67] hover:file:bg-[#192C67]/20" />
+                    <input type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx" onChange={async e => { const f = e.target.files?.[0]; if (f) { try { addToast('info', `Uploading ${f.name}...`); const url = await uploadFile(f); setEditLessonForm(p => ({ ...p, content: p.content + `\n\n📎 ${f.name}\n${url}` })); addToast('success', `${f.name} uploaded`); } catch { addToast('error', 'Upload failed'); } } }} className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#F77B0F]/10 file:text-[#F77B0F] hover:file:bg-[#F77B0F]/20" />
                   </div>
                 </div>
               )}
@@ -1632,7 +1632,7 @@ export default function CoursesPage() {
                     <p className="text-sm font-semibold text-card-foreground">Questions ({editLessonQuestions.length})</p>
                     <div className="flex items-center gap-2">
                       {/* Bulk CSV import */}
-                      <label className="cursor-pointer px-3 py-1 text-xs font-semibold rounded-lg border border-[#192C67]/40 text-[#192C67] dark:text-[#5b8bc7] hover:bg-[#192C67]/5 transition-colors">
+                      <label className="cursor-pointer px-3 py-1 text-xs font-semibold rounded-lg border border-[#F77B0F]/40 text-[#F77B0F] dark:text-[#5b8bc7] hover:bg-[#F77B0F]/5 transition-colors">
                         📄 Import CSV
                         <input type="file" accept=".csv,.txt" className="hidden" onChange={e => {
                           const file = e.target.files?.[0];
@@ -1665,7 +1665,7 @@ export default function CoursesPage() {
                           e.target.value = '';
                         }} />
                       </label>
-                      <button type="button" onClick={() => setEditLessonQuestions(qs => [...qs, emptyQuestion()])} className="px-3 py-1 text-xs font-semibold rounded-lg bg-[#192C67] text-white hover:bg-[#192C67]/80">+ Add Question</button>
+                      <button type="button" onClick={() => setEditLessonQuestions(qs => [...qs, emptyQuestion()])} className="px-3 py-1 text-xs font-semibold rounded-lg bg-[#F77B0F] text-white hover:bg-[#F77B0F]/80">+ Add Question</button>
                     </div>
                   </div>
                   <p className="text-[10px] text-muted-foreground -mt-1">CSV columns: <code>question, type, optionA, optionB, optionC, optionD, correctAnswer, points, explanation</code></p>
@@ -1677,7 +1677,7 @@ export default function CoursesPage() {
                       {editLessonQuestions.map((q, qi) => (
                         <div key={q._key} className="rounded-lg border border-border bg-card p-3 space-y-2">
                           <div className="flex items-start justify-between gap-2">
-                            <p className="text-xs font-bold text-[#192C67] dark:text-[#5b8bc7]">Q{qi + 1}</p>
+                            <p className="text-xs font-bold text-[#F77B0F] dark:text-[#5b8bc7]">Q{qi + 1}</p>
                             <button type="button" onClick={() => setEditLessonQuestions(qs => qs.filter((_, i) => i !== qi))} className="text-red-400 hover:text-red-600 text-xs font-medium">Remove</button>
                           </div>
                           <textarea

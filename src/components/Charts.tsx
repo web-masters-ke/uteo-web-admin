@@ -46,7 +46,7 @@ interface LineTrendProps {
   className?: string;
 }
 
-export function LineTrend({ title, subtitle, data, color = '#192C67', name = 'Value', height = 300, className }: LineTrendProps) {
+export function LineTrend({ title, subtitle, data, color = '#F77B0F', name = 'Value', height = 300, className }: LineTrendProps) {
   if (!data.length) return (
     <ChartCard title={title} subtitle={subtitle} className={className}>
       <div className="flex items-center justify-center text-muted-foreground text-sm" style={{ height }}>No data yet</div>

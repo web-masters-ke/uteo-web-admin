@@ -6,7 +6,7 @@ import { systemService, ServiceStatus, RiskMetrics, LatencyPoint } from '@/lib/s
 import { useToast } from '@/lib/toast';
 import { formatNumber } from '@/lib/utils';
 
-const BRAND = { navy: '#192C67', orange: '#F77B0F', green: '#22c55e', red: '#ef4444', amber: '#f59e0b', sky: '#0ea5e9' };
+const BRAND = { navy: '#F77B0F', orange: '#F77B0F', green: '#22c55e', red: '#ef4444', amber: '#f59e0b', sky: '#0ea5e9' };
 
 // ── Inline mini line chart ────────────────────────────────────────────────────
 function MiniLineChart({ data, color = BRAND.orange }: { data: LatencyPoint[]; color?: string }) {
