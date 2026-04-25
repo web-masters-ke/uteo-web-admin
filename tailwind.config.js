@@ -1,0 +1,52 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: 'class',
+  content: [
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/lib/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50:  '#EDF1F9',
+          100: '#D1DBED',
+          200: '#A3B6DC',
+          300: '#6F8BC4',
+          400: '#4566AC',
+          500: '#315199',
+          600: '#223D7F',
+          700: '#192C67',
+          800: '#14245A',
+          900: '#0D1942',
+        },
+        secondary: {
+          50:  '#FFF4E5',
+          100: '#FFE2BF',
+          200: '#FCCB8A',
+          300: '#FCB15C',
+          400: '#FA911A',
+          500: '#F77B0F',
+          600: '#DA6709',
+          700: '#B85304',
+          800: '#944202',
+          900: '#723301',
+        },
+        success: '#22C55E',
+        warning: '#F59E0B',
+        error: '#EF4444',
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        card: 'var(--card)',
+        'card-foreground': 'var(--card-foreground)',
+        border: 'var(--border)',
+        muted: 'var(--muted)',
+        'muted-foreground': 'var(--muted-foreground)',
+        'sidebar-bg': 'var(--sidebar-bg)',
+        'sidebar-fg': 'var(--sidebar-fg)',
+      },
+    },
+  },
+  plugins: [],
+};
