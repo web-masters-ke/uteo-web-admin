@@ -108,15 +108,18 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
         {/* Header */}
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-100 dark:border-white/5 shrink-0">
           {!collapsed && (
-            <Link href="/dashboard">
-              <img src="/logo.png" alt="Uteo" className="h-7 w-auto object-contain dark:hidden" />
-              <img src="/logo-white.png" alt="Uteo" className="hidden h-7 w-auto object-contain dark:block" />
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-[#F77B0F] flex items-center justify-center shrink-0">
+                <span className="text-white font-black text-xs">U</span>
+              </div>
+              <span className="font-black text-gray-900 dark:text-white text-base tracking-tight">UTEO</span>
             </Link>
           )}
           {collapsed && (
             <Link href="/dashboard">
-              <img src="/logo.png" alt="Uteo" className="h-6 w-6 object-contain object-left dark:hidden" />
-              <img src="/logo-white.png" alt="Uteo" className="hidden h-6 w-6 object-contain object-left dark:block" />
+              <div className="w-7 h-7 rounded-lg bg-[#F77B0F] flex items-center justify-center">
+                <span className="text-white font-black text-xs">U</span>
+              </div>
             </Link>
           )}
           <button onClick={onToggle} className="p-1.5 text-gray-300 dark:text-white/30 hover:text-gray-600 dark:hover:text-white transition-colors hidden lg:block">
