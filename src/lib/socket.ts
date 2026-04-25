@@ -1,4 +1,4 @@
-// Minimal socket stub for SkillSasa admin
+// Minimal socket stub for Uteo admin
 export interface AdminNotification {
   id: string;
   event: string;

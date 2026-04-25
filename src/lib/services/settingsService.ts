@@ -2,8 +2,8 @@ import api, { unwrap } from '../api';
 import { PlatformSettings, User } from '../types';
 
 const DEFAULT_SETTINGS: PlatformSettings = {
-  appName: 'SkillSasa',
-  supportEmail: 'support@skillsasa.co.ke',
+  appName: 'Uteo',
+  supportEmail: 'support@uteo.com',
   defaultCommissionRate: 10,
   currency: 'KES',
   maintenanceMode: false,

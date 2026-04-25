@@ -113,10 +113,10 @@ function PaymentFlow({ payment }: { payment: Payment }) {
     ? `${payment.user.firstName} ${payment.user.lastName}`
     : 'Unknown User';
 
-  let target = 'SkillSasa Platform';
+  let target = 'Uteo Platform';
   if (type === 'Booking') target = 'Trainer (via Escrow)';
   if (type === 'Course') target = 'Course Provider';
-  if (type === 'Subscription') target = 'SkillSasa Subscription';
+  if (type === 'Subscription') target = 'Uteo Subscription';
   if (type === 'Withdrawal') target = `M-Pesa (${meta?.phone || 'phone'})`;
   if (type === 'Deposit') target = 'Wallet Balance';
 
@@ -163,7 +163,7 @@ function PaymentFlow({ payment }: { payment: Payment }) {
 function generateStatement(title: string, rows: { date: string; description: string; type: string; amount: number; status: string }[], summary?: { label: string; value: string }[]) {
   const now = new Date().toLocaleDateString('en-KE', { day: 'numeric', month: 'long', year: 'numeric' });
   const html = `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>${title} — SkillSasa</title>
+<html><head><meta charset="utf-8"><title>${title} — Uteo</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; color: #1e293b; padding: 40px; max-width: 900px; margin: 0 auto; }
@@ -197,7 +197,7 @@ function generateStatement(title: string, rows: { date: string; description: str
     <button onclick="window.print()" style="padding:10px 24px;background:#F77B0F;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px">Print / Save as PDF</button>
   </div>
   <div class="header">
-    <div class="logo">SkillSasa<small>LEARN, GROW, SUCCEED</small></div>
+    <div class="logo">Uteo<small>Skills Today. Opportunities Tomorrow.</small></div>
     <div class="title"><h1>${title}</h1><div class="date">Generated: ${now}</div><div class="date">${rows.length} records</div></div>
   </div>
   ${summary ? `<div class="summary">${summary.map(s => `<div class="summary-card"><div class="label">${s.label}</div><div class="val">${s.value}</div></div>`).join('')}</div>` : ''}
@@ -219,8 +219,8 @@ function generateStatement(title: string, rows: { date: string; description: str
     </tbody>
   </table>
   <div class="footer">
-    <p>SkillSasa — Kenya's AI-Powered Trainer Marketplace</p>
-    <p>support@skillsasa.co.ke &middot; This is a system-generated statement.</p>
+    <p>Uteo — Recruitment Intelligence Platform</p>
+    <p>support@uteo.com &middot; This is a system-generated statement.</p>
   </div>
 </body></html>`;
   const w = window.open('', '_blank');

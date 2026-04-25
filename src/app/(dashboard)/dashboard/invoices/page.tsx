@@ -115,7 +115,7 @@ function downloadReceipt(inv: InvoiceItem) {
     <button onclick="window.print()" style="padding:10px 24px;background:#F77B0F;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px">Print / Save as PDF</button>
   </div>
   <div class="header">
-    <div class="logo">SkillSasa<small>LEARN, GROW, SUCCEED</small></div>
+    <div class="logo">Uteo<small>Skills Today. Opportunities Tomorrow.</small></div>
     <div class="invoice-title">
       <h1>Invoice</h1>
       <div class="number">${inv.invoiceNumber}</div>
@@ -152,8 +152,8 @@ function downloadReceipt(inv: InvoiceItem) {
     ${inv.status === 'PAID' ? `<tr><td style="color:#166534;font-weight:700">Paid</td><td class="amount" style="color:#166534;font-weight:700">${inv.paidAt ? new Date(inv.paidAt).toLocaleDateString('en-KE') : 'Yes'}</td></tr>` : ''}
   </table></div>
   <div class="footer">
-    <p>SkillSasa — Kenya's AI-Powered Trainer Marketplace</p>
-    <p>support@skillsasa.co.ke &middot; www.skillsasa.co.ke</p>
+    <p>Uteo — Recruitment Intelligence Platform</p>
+    <p>support@uteo.com &middot; www.uteo.com</p>
   </div>
 </body></html>`;
 

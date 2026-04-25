@@ -640,12 +640,12 @@ export default function TrainersPage() {
               <button type="button"
                 onClick={() => setCreateForm({ ...createForm, trainerMode: 'inhouse', firmTrainerId: '' })}
                 className={`flex-1 px-3 py-2.5 rounded-lg border text-xs font-medium transition-all ${createForm.trainerMode === 'inhouse' ? 'border-primary-500 bg-primary-500/10 text-primary-500' : 'border-border text-muted-foreground hover:bg-muted/50'}`}
-              >In-House (SkillSasa)</button>
+              >In-House (Uteo)</button>
             </div>
 
             {createForm.trainerMode === 'inhouse' && (
               <div className="mt-3 p-3 rounded-lg bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800">
-                <p className="text-xs text-teal-700 dark:text-teal-300">This trainer will be added as a SkillSasa in-house trainer under the platform&apos;s main office.</p>
+                <p className="text-xs text-teal-700 dark:text-teal-300">This trainer will be added as a Uteo in-house trainer under the platform&apos;s main office.</p>
               </div>
             )}
 

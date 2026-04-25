@@ -239,7 +239,7 @@ function MoneyFlowDiagram({ moneyFlow }: { moneyFlow: MoneyFlowData }) {
       <div className="flex items-start justify-between mb-6">
         <div>
           <h3 className="text-lg font-bold text-card-foreground">Cash Flow Pipeline</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">How money moves through the SkillSasa platform</p>
+          <p className="text-xs text-muted-foreground mt-0.5">How money moves through the Uteo platform</p>
         </div>
         {(Number(moneyFlow.escrowRefunded) || 0) > 0 && (
           <div className="flex items-center gap-1.5 text-xs text-red-500 bg-red-50 dark:bg-red-900/10 rounded-lg px-3 py-1.5 shrink-0">
@@ -468,7 +468,7 @@ export default function FinancialsPage() {
           { label: 'Financials' },
         ]}
       />
-      <p className="text-muted-foreground -mt-4 mb-6 text-sm">SkillSasa&apos;s earnings, revenue sources, and money flow</p>
+      <p className="text-muted-foreground -mt-4 mb-6 text-sm">Uteo&apos;s earnings, revenue sources, and money flow</p>
 
       {/* ── Tab bar ─────────────────────────────────────────────────────────── */}
       <div className="flex items-center gap-1 mb-6 border-b border-border">

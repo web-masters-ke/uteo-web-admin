@@ -98,7 +98,7 @@ export default function SettingsPage() {
         phone: profile.phone || undefined,
       });
       if (user) {
-        login(localStorage.getItem('skillsasa-admin-token')!, { ...user, ...updatedUser });
+        login(localStorage.getItem('uteo-admin-token')!, { ...user, ...updatedUser });
       }
       addToast('success', 'Profile updated');
     } catch {
@@ -438,11 +438,11 @@ export default function SettingsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1.5">App Name</label>
-                    <input value={settings?.appName || 'SkillSasa'} readOnly className={readOnlyCls} />
+                    <input value={settings?.appName || 'Uteo'} readOnly className={readOnlyCls} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1.5">Support Email</label>
-                    <input value={settings?.supportEmail || 'support@skillsasa.co.ke'} readOnly className={readOnlyCls} />
+                    <input value={settings?.supportEmail || 'support@uteo.com'} readOnly className={readOnlyCls} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1.5">Default Commission Rate</label>

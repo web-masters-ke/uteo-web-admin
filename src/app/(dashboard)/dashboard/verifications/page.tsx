@@ -416,8 +416,8 @@ export default function VerificationsPage() {
           await api.post('/notifications/send', {
             userId,
             channel: 'EMAIL',
-            title: 'SkillSasa: More information needed',
-            message: `We need more information to verify your credential.\n\nDetails: ${reviewNotes}\n\nPlease log in to your SkillSasa account and resubmit your documents.`,
+            title: 'Uteo: More information needed',
+            message: `We need more information to verify your credential.\n\nDetails: ${reviewNotes}\n\nPlease log in to your Uteo account and resubmit your documents.`,
           }).catch(() => {});
         }
         addToast('success', 'Request for more information sent to trainer');

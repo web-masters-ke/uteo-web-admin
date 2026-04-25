@@ -6,8 +6,8 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'SkillSasa Admin — Connecting Professionals with Expert Trainers.',
-  description: 'SkillSasa admin console — Professional Trainers Association of Kenya.',
+  title: 'Uteo Admin — Connecting Professionals with Expert Trainers.',
+  description: 'Uteo admin console — Professional Trainers Association of Kenya.',
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',

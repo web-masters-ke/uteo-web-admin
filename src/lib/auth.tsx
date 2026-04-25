@@ -21,23 +21,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('skillsasa-admin-token');
-    const storedUser = localStorage.getItem('skillsasa-admin-user');
+    const storedToken = localStorage.getItem('uteo-admin-token');
+    const storedUser = localStorage.getItem('uteo-admin-user');
     if (storedToken && storedUser) {
       try { setToken(storedToken); setUser(JSON.parse(storedUser)); }
-      catch { localStorage.removeItem('skillsasa-admin-token'); localStorage.removeItem('skillsasa-admin-user'); }
+      catch { localStorage.removeItem('uteo-admin-token'); localStorage.removeItem('uteo-admin-user'); }
     }
     setLoading(false);
   }, []);
 
   const login = (newToken: string, newUser: User) => {
-    localStorage.setItem('skillsasa-admin-token', newToken);
-    localStorage.setItem('skillsasa-admin-user', JSON.stringify(newUser));
+    localStorage.setItem('uteo-admin-token', newToken);
+    localStorage.setItem('uteo-admin-user', JSON.stringify(newUser));
     setToken(newToken); setUser(newUser);
   };
 
   const logout = () => {
-    localStorage.removeItem('skillsasa-admin-token'); localStorage.removeItem('skillsasa-admin-user');
+    localStorage.removeItem('uteo-admin-token'); localStorage.removeItem('uteo-admin-user');
     setToken(null); setUser(null); window.location.href = '/login';
   };
 

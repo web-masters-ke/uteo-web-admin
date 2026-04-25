@@ -109,14 +109,14 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-100 dark:border-white/5 shrink-0">
           {!collapsed && (
             <Link href="/dashboard">
-              <img src="/logo.png" alt="SkillSasa" className="h-7 w-auto object-contain dark:hidden" />
-              <img src="/logo-white.png" alt="SkillSasa" className="hidden h-7 w-auto object-contain dark:block" />
+              <img src="/logo.png" alt="Uteo" className="h-7 w-auto object-contain dark:hidden" />
+              <img src="/logo-white.png" alt="Uteo" className="hidden h-7 w-auto object-contain dark:block" />
             </Link>
           )}
           {collapsed && (
             <Link href="/dashboard">
-              <img src="/logo.png" alt="SkillSasa" className="h-6 w-6 object-contain object-left dark:hidden" />
-              <img src="/logo-white.png" alt="SkillSasa" className="hidden h-6 w-6 object-contain object-left dark:block" />
+              <img src="/logo.png" alt="Uteo" className="h-6 w-6 object-contain object-left dark:hidden" />
+              <img src="/logo-white.png" alt="Uteo" className="hidden h-6 w-6 object-contain object-left dark:block" />
             </Link>
           )}
           <button onClick={onToggle} className="p-1.5 text-gray-300 dark:text-white/30 hover:text-gray-600 dark:hover:text-white transition-colors hidden lg:block">

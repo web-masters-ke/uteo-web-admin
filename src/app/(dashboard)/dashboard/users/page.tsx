@@ -539,7 +539,7 @@ export default function UsersPage() {
                       {[
                         { v: 'independent', label: 'Independent' },
                         { v: 'firm', label: 'Attach to Org' },
-                        { v: 'inhouse', label: 'In-House (SkillSasa)' },
+                        { v: 'inhouse', label: 'In-House (Uteo)' },
                       ].map(m => (
                         <button key={m.v} type="button"
                           onClick={() => setCreateForm({ ...createForm, trainerMode: m.v as any, firmTrainerId: '' })}
@@ -550,7 +550,7 @@ export default function UsersPage() {
 
                     {createForm.trainerMode === 'inhouse' && (
                       <div className="p-3 rounded-lg bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800">
-                        <p className="text-xs text-teal-700 dark:text-teal-300">This trainer will be added as a SkillSasa in-house trainer under the platform&apos;s main office.</p>
+                        <p className="text-xs text-teal-700 dark:text-teal-300">This trainer will be added as a Uteo in-house trainer under the platform&apos;s main office.</p>
                       </div>
                     )}
 

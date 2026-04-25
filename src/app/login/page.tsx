@@ -74,7 +74,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 className={ic}
                 style={{ background: 'rgba(255,255,255,0.07)' }}
-                placeholder="admin@skillsasa.co.ke"
+                placeholder="admin@uteo.com"
                 autoComplete="email"
               />
             </div>
@@ -134,7 +134,7 @@ export default function LoginPage() {
 
       {/* Logo pinned to bottom-left of the page */}
       <div className="absolute bottom-8 right-10 z-10">
-        <img src="/logo-white.png" alt="SkillSasa" className="h-12 w-auto object-contain object-right" />
+        <img src="/logo.png" alt="Uteo" className="h-12 w-auto object-contain object-right" />
       </div>
     </div>
   );

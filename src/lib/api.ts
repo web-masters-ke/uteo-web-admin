@@ -9,7 +9,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('skillsasa-admin-token');
+      const token = localStorage.getItem('uteo-admin-token');
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -26,8 +26,8 @@ api.interceptors.response.use(
       const url = error.config?.url || '';
       const isAuthEndpoint = url.includes('/auth/');
       if (!isAuthEndpoint && typeof window !== 'undefined') {
-        localStorage.removeItem('skillsasa-admin-token');
-        localStorage.removeItem('skillsasa-admin-user');
+        localStorage.removeItem('uteo-admin-token');
+        localStorage.removeItem('uteo-admin-user');
         window.location.href = '/login';
       }
     }
