@@ -17,13 +17,13 @@
 .dark {
   --background: #111111;
   --foreground: #E8E8E8;
-  --card: #1c1c1e;
+  --card: #1e1e1e;
   --card-foreground: #E8E8E8;
-  --border: #2a2a2a;
-  --muted: #1c1c1e;
+  --border: rgba(255,255,255,0.08);
+  --muted: #181818;
   --muted-foreground: #888888;
-  --sidebar-bg: #0D1942;
-  --sidebar-fg: #D1DBED;
+  --sidebar-bg: #1a1a1a;
+  --sidebar-fg: #cccccc;
 }
 
 body {
