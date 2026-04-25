@@ -100,7 +100,7 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
       </button>
 
-      <aside className={`fixed top-0 left-0 h-full bg-white dark:bg-[#1a1a1a] border-r border-gray-100 dark:border-white/6 z-50 flex flex-col transition-all duration-300 ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} ${collapsed ? 'w-16' : 'w-64'}`}>
+      <aside className={`fixed top-0 left-0 h-full bg-white dark:bg-[#111111] border-r border-gray-100 dark:border-white/6 z-50 flex flex-col transition-all duration-300 ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} ${collapsed ? 'w-16' : 'w-64'}`}>
 
         {/* Header */}
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-100 dark:border-white/5 shrink-0">
