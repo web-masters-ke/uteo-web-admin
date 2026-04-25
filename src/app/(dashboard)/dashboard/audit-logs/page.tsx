@@ -95,6 +95,30 @@ export default function AuditLogsPage() {
 
   const hasFilters = search || actionFilter || resourceFilter || startDate || endDate;
 
+  const exportCsv = () => {
+    const headers = ['Timestamp', 'User', 'Email', 'Action', 'Resource', 'Resource ID', 'Severity', 'IP'];
+    const rows = logs.map(l => {
+      const sev = getSeverity(l);
+      const meta = l.metadata as Record<string, any> | undefined;
+      return [
+        formatDateTime(l.createdAt),
+        l.user ? `${l.user.firstName} ${l.user.lastName}` : 'System',
+        l.user?.email ?? '',
+        l.action,
+        l.resource,
+        l.resourceId ?? '',
+        sev,
+        meta?.ip ?? '',
+      ].map(v => `"${String(v ?? '').replace(/"/g, '""')}"`);
+    });
+    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `audit-logs-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  };
+
   const clearFilters = () => {
     setSearch('');
     setActionFilter('');
@@ -206,9 +230,14 @@ export default function AuditLogsPage() {
         title="Audit Logs"
         breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Audit Logs' }]}
         actions={
-          <span className="text-sm text-muted-foreground">
-            Track all system actions and changes
-          </span>
+          <button
+            onClick={exportCsv}
+            disabled={logs.length === 0}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-sm font-medium hover:bg-muted transition-colors disabled:opacity-50"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            Export CSV
+          </button>
         }
       />
 

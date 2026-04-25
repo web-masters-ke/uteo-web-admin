@@ -30,6 +30,7 @@ export const PAGE_ROLES: Record<string, AdminRole[]> = {
   '/dashboard/notifications/compose': ['SUPER_ADMIN', 'ADMIN'],
   '/dashboard/system': ['SUPER_ADMIN', 'ADMIN'],
   '/dashboard/ai-control': ['SUPER_ADMIN'],
+  '/dashboard/feature-flags': ['SUPER_ADMIN'],
   '/dashboard/roles': ['SUPER_ADMIN'],
   // Uteo recruitment
   '/dashboard/jobs': ['SUPER_ADMIN', 'ADMIN', 'SUPPORT'],
