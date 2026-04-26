@@ -47,12 +47,17 @@ export default function CompaniesPage() {
   useEffect(() => { fetchCompanies(); }, [fetchCompanies]);
 
   const handleVerifyToggle = async (company: AdminCompany) => {
+    const newVal = !company.isVerified;
+    // Optimistic update
+    setCompanies(prev => prev.map(c => c.id === company.id ? { ...c, isVerified: newVal } : c));
     setActionLoading(company.id);
     try {
-      await companyService.verify(company.id, !company.isVerified);
-      addToast('success', company.isVerified ? `${company.name} unverified` : `${company.name} verified`);
+      await companyService.verify(company.id, newVal);
+      addToast('success', newVal ? `${company.name} verified` : `${company.name} unverified`);
       fetchCompanies();
     } catch {
+      // Revert
+      setCompanies(prev => prev.map(c => c.id === company.id ? { ...c, isVerified: company.isVerified } : c));
       addToast('error', 'Failed to update verification');
     } finally {
       setActionLoading(null);
