@@ -46,30 +46,33 @@ export default function JobsPage() {
   useEffect(() => { fetchJobs(); }, [fetchJobs]);
 
   const handleStatusChange = async (job: AdminJob, status: string) => {
-    setActionLoading(true);
+    // Optimistic update — reflect immediately in the table
+    setJobs(prev => prev.map(j => j.id === job.id ? { ...j, status } : j));
     try {
       await jobService.updateStatus(job.id, status);
-      addToast('success', `Job status updated to ${status}`);
+      addToast('success', `Job marked as ${status.toLowerCase()}`);
       fetchJobs();
     } catch {
+      // Revert on failure
+      setJobs(prev => prev.map(j => j.id === job.id ? { ...j, status: job.status } : j));
       addToast('error', 'Failed to update job status');
-    } finally {
-      setActionLoading(false);
     }
   };
 
   const handleDelete = async () => {
     if (!delDialog.job) return;
-    setActionLoading(true);
+    const deletedId = delDialog.job.id;
+    setDelDialog({ open: false, job: null });
+    // Optimistic remove from list
+    setJobs(prev => prev.filter(j => j.id !== deletedId));
+    setTotal(prev => prev - 1);
     try {
-      await jobService.delete(delDialog.job.id);
+      await jobService.delete(deletedId);
       addToast('success', 'Job deleted');
-      setDelDialog({ open: false, job: null });
       fetchJobs();
     } catch {
       addToast('error', 'Failed to delete job');
-    } finally {
-      setActionLoading(false);
+      fetchJobs(); // restore on failure
     }
   };
 
