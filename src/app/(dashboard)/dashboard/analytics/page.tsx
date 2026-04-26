@@ -3,447 +3,317 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/PageHeader';
-import { LineTrend, BarCompare, DonutBreakdown, LineSeries, BarTrend } from '@/components/Charts';
-import { analyticsService, TopTrainer, CategoryBreakdown } from '@/lib/services/analyticsService';
+import { LineTrend, ColorBar, PieBreakdown, HorizBar, LineSeries, BarTrend } from '@/components/Charts';
+import { analyticsService } from '@/lib/services/analyticsService';
 import { applicationAdminService } from '@/lib/services/applicationAdminService';
 import { jobService } from '@/lib/services/jobService';
+import { userService } from '@/lib/services/userService';
 import { useToast } from '@/lib/toast';
-import { formatCurrency, formatNumber } from '@/lib/utils';
+import { formatNumber } from '@/lib/utils';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type Period = '7d' | '30d' | '90d' | '1y';
 
-interface OverviewData {
-  totalUsers: number;
-  totalTrainers: number;
-  totalClients: number;
-  totalBookings: number;
-  totalRevenue: number;
+interface OverviewKpis {
+  totalJobSeekers: number;
+  totalRecruiters: number;
+  totalCompanies: number;
+  openJobs: number;
+  totalApplications: number;
+  hiredCount: number;
+  conversionRate: number;
   activeDisputes: number;
-  pendingVerifications: number;
-}
-
-interface RevenueData {
-  data: { date: string; revenue: number; amount?: number; value?: number }[];
-  total: number;
-  growth: number;
-}
-
-interface BookingsData {
-  byStatus: { status: string; count: number }[];
-  trend: { date: string; count: number; value?: number }[];
-}
-
-interface UsersData {
-  trend: { date: string; clients: number; trainers: number }[];
-  byRole: { role: string; count: number }[];
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const PERIODS: { label: string; value: Period }[] = [
-  { label: '7 Days', value: '7d' },
-  { label: '30 Days', value: '30d' },
-  { label: '90 Days', value: '90d' },
-  { label: '1 Year', value: '1y' },
+const PERIODS: { label: string; value: Period; days: number }[] = [
+  { label: '7 Days', value: '7d', days: 7 },
+  { label: '30 Days', value: '30d', days: 30 },
+  { label: '90 Days', value: '90d', days: 90 },
+  { label: '1 Year', value: '1y', days: 365 },
 ];
 
-const BRAND = {
-  navy: '#F77B0F',
-  gold: '#F77B0F',
-  teal: '#0D9488',
-  green: '#22c55e',
-  red: '#ef4444',
-  sky: '#0ea5e9',
-  purple: '#8B5CF6',
-  pink: '#EC4899',
-};
+const CHART_COLORS = ['#F77B0F', '#10B981', '#8B5CF6', '#06B6D4', '#F43F5E', '#F59E0B', '#34D399', '#FB923C'];
+const FUNNEL_COLORS = ['#F59E0B', '#06B6D4', '#8B5CF6', '#F77B0F', '#6366F1', '#10B981', '#EF4444'];
+const STATUS_ORDER = ['PENDING', 'UNDER_REVIEW', 'SHORTLISTED', 'INTERVIEW', 'OFFERED', 'HIRED', 'REJECTED'];
 
-const STATUS_COLORS: Record<string, string> = {
-  COMPLETED: BRAND.teal,
-  CONFIRMED: BRAND.navy,
-  CANCELLED: BRAND.red,
-  DISPUTED: BRAND.gold,
-  PENDING: BRAND.sky,
-};
-
-const KPI_IMAGES = {
-  users: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80',
-  trainers: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80',
-  clients: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-  bookings: 'https://images.unsplash.com/photo-1573497019236-61e7a0081f95?auto=format&fit=crop&w=800&q=80',
-  revenue: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=800&q=80',
-  alerts: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
+const KPI_PHOTOS = {
+  seekers: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80',
+  recruiters: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80',
+  jobs: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
+  applications: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80',
+  hired: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80',
+  conversion: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-const fmtKES = (n: number) => formatCurrency(Number(n) || 0);
-
-function safeArray<T>(val: unknown): T[] {
-  if (Array.isArray(val)) return val;
-  if (val && typeof val === 'object' && 'data' in (val as Record<string, unknown>)) {
-    const inner = (val as Record<string, unknown>).data;
-    if (Array.isArray(inner)) return inner;
-  }
-  if (val && typeof val === 'object' && 'items' in (val as Record<string, unknown>)) {
-    const inner = (val as Record<string, unknown>).items;
-    if (Array.isArray(inner)) return inner;
-  }
-  return [];
+function periodDays(p: Period): number {
+  return PERIODS.find(x => x.value === p)?.days ?? 30;
 }
 
-function renderStars(rating: number): React.ReactNode {
-  const full = Math.floor(rating);
-  const half = rating - full >= 0.5;
-  const empty = 5 - full - (half ? 1 : 0);
-  return (
-    <span className="inline-flex items-center gap-0.5">
-      {Array.from({ length: full }, (_, i) => (
-        <svg key={`f${i}`} className="w-3.5 h-3.5 text-[#F77B0F]" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      ))}
-      {half && (
-        <svg className="w-3.5 h-3.5 text-[#F77B0F]" fill="currentColor" viewBox="0 0 20 20">
-          <defs>
-            <linearGradient id="halfStar">
-              <stop offset="50%" stopColor="currentColor" />
-              <stop offset="50%" stopColor="var(--muted)" />
-            </linearGradient>
-          </defs>
-          <path fill="url(#halfStar)" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      )}
-      {Array.from({ length: empty }, (_, i) => (
-        <svg key={`e${i}`} className="w-3.5 h-3.5 text-muted" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      ))}
-      <span className="ml-1 text-xs text-muted-foreground">{rating.toFixed(1)}</span>
-    </span>
-  );
+function buildDayMap(days: number): Record<string, number> {
+  const map: Record<string, number> = {};
+  const now = new Date();
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    map[d.toISOString().slice(5, 10)] = 0;
+  }
+  return map;
+}
+
+function isWithinDays(dateStr: string | undefined | null, days: number): boolean {
+  if (!dateStr) return false;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  return new Date(dateStr) >= cutoff;
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function HeroKpiCard({ label, value, subtitle, image, badge, onClick }: {
-  label: string;
-  value: string;
-  subtitle?: string;
-  image: string;
-  badge?: { value: number; label?: string };
-  onClick?: () => void;
+function HeroKpiCard({ label, value, subtitle, photo, badge, onClick }: {
+  label: string; value: string; subtitle?: string; photo: string;
+  badge?: { value: number; label?: string }; onClick?: () => void;
 }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl p-6 text-white shadow-xl min-h-[160px] ${onClick ? 'cursor-pointer hover:shadow-2xl hover:scale-[1.02] transition-all' : ''}`}
+      className={`relative overflow-hidden rounded-2xl p-6 text-white shadow-lg min-h-[150px] ${onClick ? 'cursor-pointer hover:shadow-2xl hover:scale-[1.02] transition-all' : ''}`}
       onClick={onClick}
     >
-      <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" />
+      <img src={photo} alt="" className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0 bg-black/65" />
       <div className="relative z-10">
-        <p className="text-xs font-bold uppercase tracking-wider text-white/90 drop-shadow-lg">{label}</p>
-        <p className="text-3xl font-black mt-2 tracking-tight text-white drop-shadow-xl" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>{value}</p>
+        <p className="text-[11px] font-bold uppercase tracking-widest text-white/80">{label}</p>
+        <p className="text-3xl font-black mt-2 tracking-tight" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>{value}</p>
         {badge && (
-          <span className={`inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full text-xs font-bold ${badge.value >= 0 ? 'bg-green-500/30 text-green-100 backdrop-blur-sm' : 'bg-red-500/30 text-red-100 backdrop-blur-sm'}`}>
+          <span className={`inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${badge.value >= 0 ? 'bg-green-500/30 text-green-100' : 'bg-red-500/30 text-red-100'}`}>
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={badge.value >= 0 ? 'M5 10l7-7m0 0l7 7m-7-7v18' : 'M19 14l-7 7m0 0l-7-7m7 7V3'} />
             </svg>
-            {badge.value >= 0 ? '+' : ''}{badge.value.toFixed(1)}% {badge.label || 'growth'}
+            {badge.value >= 0 ? '+' : ''}{badge.value.toFixed(1)}% {badge.label ?? 'growth'}
           </span>
         )}
-        {subtitle && !badge && <p className="text-sm font-semibold text-white/80 mt-2 drop-shadow-md">{subtitle}</p>}
+        {subtitle && !badge && <p className="text-sm font-semibold text-white/75 mt-2">{subtitle}</p>}
       </div>
     </div>
   );
 }
 
-function SectionHeader({ title, subtitle }: { title: string; subtitle: string }) {
+function SectionDivider({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div className="mb-5">
-      <h2 className="text-lg font-bold text-card-foreground">{title}</h2>
+      <h2 className="text-base font-bold text-foreground tracking-tight">{title}</h2>
       <p className="text-sm text-muted-foreground mt-0.5">{subtitle}</p>
     </div>
   );
 }
 
-// ── Skeleton Components ───────────────────────────────────────────────────────
-
 function SkeletonKpiRow() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-10">
-      {Array.from({ length: 6 }, (_, i) => (
-        <div key={i} className="rounded-2xl h-[160px] animate-pulse bg-muted/60" />
-      ))}
+    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4 mb-10">
+      {Array.from({ length: 6 }, (_, i) => <div key={i} className="rounded-2xl h-[150px] animate-pulse bg-muted/60" />)}
     </div>
   );
 }
 
-function SkeletonChart({ className = '' }: { className?: string }) {
+function SkeletonChart({ height = 300, className = '' }: { height?: number; className?: string }) {
   return (
     <div className={`bg-card rounded-xl border border-border p-6 animate-pulse ${className}`}>
-      <div className="h-5 bg-muted rounded w-40 mb-2" />
-      <div className="h-3 bg-muted rounded w-60 mb-6" />
-      <div className="h-[280px] bg-muted/40 rounded" />
+      <div className="h-4 bg-muted rounded w-40 mb-2" />
+      <div className="h-3 bg-muted rounded w-60 mb-4" />
+      <div className="bg-muted/40 rounded-lg" style={{ height }} />
     </div>
   );
 }
 
-function SkeletonTable() {
-  return (
-    <div className="bg-card rounded-xl border border-border p-6 animate-pulse">
-      <div className="h-5 bg-muted rounded w-52 mb-2" />
-      <div className="h-3 bg-muted rounded w-72 mb-6" />
-      <div className="space-y-3">
-        {Array.from({ length: 5 }, (_, i) => (
-          <div key={i} className="h-12 bg-muted/40 rounded" />
-        ))}
+function StatTile({ label, value, sub, color = '#F77B0F', href, onClick }: {
+  label: string; value: string | number; sub?: string; color?: string; href?: string; onClick?: () => void;
+}) {
+  const inner = (
+    <div className="bg-card border border-border rounded-xl p-5 h-full hover:border-[#F77B0F]/30 transition-colors">
+      <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-3" style={{ background: color + '18' }}>
+        <div className="w-3 h-3 rounded-full" style={{ background: color }} />
       </div>
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">{label}</p>
+      <p className="text-2xl font-bold text-foreground tabular-nums">{value}</p>
+      {sub && <p className="text-xs text-muted-foreground mt-1">{sub}</p>}
     </div>
   );
+  if (href) return <a href={href} className="block">{inner}</a>;
+  if (onClick) return <button className="w-full text-left" onClick={onClick}>{inner}</button>;
+  return inner;
 }
 
-// ── Page Component ────────────────────────────────────────────────────────────
+// ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AnalyticsPage() {
   const router = useRouter();
   const { addToast } = useToast();
   const [period, setPeriod] = useState<Period>('30d');
+  const [loading, setLoading] = useState(true);
 
-  // Data states
-  const [overview, setOverview] = useState<OverviewData | null>(null);
-  const [revenueData, setRevenueData] = useState<RevenueData | null>(null);
-  const [bookingsData, setBookingsData] = useState<BookingsData | null>(null);
-  const [usersData, setUsersData] = useState<UsersData | null>(null);
-  const [topTrainers, setTopTrainers] = useState<TopTrainer[]>([]);
-  const [categories, setCategories] = useState<CategoryBreakdown[]>([]);
+  // KPI state
+  const [kpis, setKpis] = useState<OverviewKpis | null>(null);
 
-  // Recruitment analytics state
-  const [recruitmentLoading, setRecruitmentLoading] = useState(true);
-  const [recruitmentFunnel, setRecruitmentFunnel] = useState<{ name: string; value: number }[]>([]);
-  const [topSkills, setTopSkills] = useState<{ date: string; value: number }[]>([]);
-  const [jobTypeBreakdown, setJobTypeBreakdown] = useState<{ name: string; value: number }[]>([]);
+  // Chart data states
   const [appsPerDay, setAppsPerDay] = useState<{ date: string; value: number }[]>([]);
+  const [signupsPerDay, setSignupsPerDay] = useState<{ date: string; value: number }[]>([]);
+  const [appStatusPie, setAppStatusPie] = useState<{ name: string; value: number }[]>([]);
+  const [jobTypePie, setJobTypePie] = useState<{ name: string; value: number }[]>([]);
+  const [jobTypeBar, setJobTypeBar] = useState<{ name: string; value: number }[]>([]);
+  const [funnelBar, setFunnelBar] = useState<{ name: string; value: number }[]>([]);
+  const [topCompaniesBar, setTopCompaniesBar] = useState<{ name: string; value: number }[]>([]);
+  const [userGrowthSeries, setUserGrowthSeries] = useState<{ date: string; seekers: number; recruiters: number }[]>([]);
+  const [topSkillsBar, setTopSkillsBar] = useState<{ name: string; value: number }[]>([]);
+  const [appsByLocation, setAppsByLocation] = useState<{ name: string; value: number }[]>([]);
 
-  // Loading states
-  const [overviewLoading, setOverviewLoading] = useState(true);
-  const [chartsLoading, setChartsLoading] = useState(true);
+  const days = periodDays(period);
 
-  // Fetch overview (doesn't depend on period)
-  const fetchOverview = useCallback(async () => {
-    setOverviewLoading(true);
+  const fetchAll = useCallback(async () => {
+    setLoading(true);
     try {
-      const data = await analyticsService.overview().catch(() => null);
-      if (data) setOverview(data);
-      else {
-        // Fallback to dashboard endpoint
-        const dash = await analyticsService.getDashboard();
-        setOverview({
-          totalUsers: dash.totalUsers,
-          totalTrainers: dash.totalTrainers,
-          totalClients: dash.totalUsers - dash.totalTrainers,
-          totalBookings: dash.totalBookings,
-          totalRevenue: Number(dash.totalRevenue) || 0,
-          activeDisputes: dash.activeDisputes || 0,
-          pendingVerifications: dash.pendingVerifications || 0,
-        });
-      }
-    } catch {
-      addToast('error', 'Failed to load overview data');
-    } finally {
-      setOverviewLoading(false);
-    }
-  }, [addToast]);
-
-  // Fetch period-dependent data
-  const fetchCharts = useCallback(async () => {
-    setChartsLoading(true);
-    try {
-      const [revRaw, bookRaw, usrRaw, topRaw, catRaw] = await Promise.all([
-        analyticsService.revenue(period).catch(() => null),
-        analyticsService.bookings(period).catch(() => null),
-        analyticsService.users(period).catch(() => null),
-        analyticsService.topTrainers(10).catch(() => []),
-        analyticsService.categories().catch(() => []),
+      const [dashData, appsData, jobsData, usersData, analyticsData] = await Promise.all([
+        analyticsService.getDashboard().catch(() => null),
+        applicationAdminService.list({ limit: 500, page: 1 }).catch(() => ({ items: [], total: 0 })),
+        jobService.list({ limit: 500, page: 1 }).catch(() => ({ items: [], total: 0 })),
+        userService.getAll({ page: 1, limit: 500 }).catch(() => ({ items: [], total: 0 })),
+        analyticsService.getAnalytics(undefined, undefined, days).catch(() => null),
       ]);
 
-      // Normalize revenue data
-      if (revRaw) {
-        const items = safeArray<any>(revRaw.data || revRaw.trend || revRaw.items || revRaw);
-        setRevenueData({
-          data: items.map((d: any) => ({
-            date: d.date || d.period || d.label || '',
-            revenue: Number(d.revenue || d.amount || d.value || d.total || 0),
-          })),
-          total: Number(revRaw.total || revRaw.totalRevenue || 0),
-          growth: Number(revRaw.growth || revRaw.growthPercentage || 0),
-        });
-      }
+      const apps = ((appsData as any).items ?? []) as any[];
+      const jobs = ((jobsData as any).items ?? []) as any[];
+      const users = ((usersData as any).items ?? []) as any[];
 
-      // Normalize bookings data
-      if (bookRaw) {
-        const statusArr = safeArray<any>(bookRaw.byStatus || bookRaw.statusBreakdown || bookRaw.statuses || []);
-        const trendArr = safeArray<any>(bookRaw.trend || bookRaw.data || bookRaw.items || []);
-        setBookingsData({
-          byStatus: statusArr.map((s: any) => ({
-            status: s.status || s.name || s.label || 'Unknown',
-            count: Number(s.count || s.value || s.total || 0),
-          })),
-          trend: trendArr.map((t: any) => ({
-            date: t.date || t.period || t.label || '',
-            count: Number(t.count || t.value || t.bookings || t.total || 0),
-          })),
-        });
-      }
+      // ── KPIs ──────────────────────────────────────────────────────────────
+      const hiredCount = apps.filter((a: any) => a.status === 'HIRED').length;
+      const openJobs = jobs.filter((j: any) => j.status === 'ACTIVE').length;
+      const totalApplications = (appsData as any).total ?? apps.length;
 
-      // Normalize users data
-      if (usrRaw) {
-        const trendArr = safeArray<any>(usrRaw.trend || usrRaw.data || usrRaw.signups || usrRaw.items || []);
-        const roleArr = safeArray<any>(usrRaw.byRole || usrRaw.roles || usrRaw.roleBreakdown || []);
-        setUsersData({
-          trend: trendArr.map((t: any) => ({
-            date: t.date || t.period || t.label || '',
-            clients: Number(t.clients || t.CLIENT || 0),
-            trainers: Number(t.trainers || t.TRAINER || 0),
-          })),
-          byRole: roleArr.map((r: any) => ({
-            role: r.role || r.name || r.label || 'Unknown',
-            count: Number(r.count || r.value || r.total || 0),
-          })),
-        });
-      }
-
-      setTopTrainers(Array.isArray(topRaw) ? topRaw : safeArray(topRaw));
-      setCategories(Array.isArray(catRaw) ? catRaw : safeArray(catRaw));
-    } catch {
-      addToast('error', 'Failed to load analytics charts');
-    } finally {
-      setChartsLoading(false);
-    }
-  }, [period, addToast]);
-
-  // Fetch recruitment analytics
-  const fetchRecruitmentAnalytics = useCallback(async () => {
-    setRecruitmentLoading(true);
-    try {
-      const [appsData, jobsData] = await Promise.all([
-        applicationAdminService.list({ limit: 200 }).catch(() => ({ items: [], total: 0 })),
-        jobService.list({ limit: 200 }).catch(() => ({ items: [], total: 0 })),
-      ]);
-
-      const apps = (appsData as any).items ?? [];
-      const jobs = (jobsData as any).items ?? [];
-
-      // Build recruitment funnel
-      const statusCounts: Record<string, number> = {
-        PENDING: 0, UNDER_REVIEW: 0, REVIEWED: 0, SHORTLISTED: 0, HIRED: 0,
-      };
-      apps.forEach((a: any) => {
-        if (a.status in statusCounts) statusCounts[a.status]++;
+      setKpis({
+        totalJobSeekers: dashData?.totalUsers ?? (usersData as any).total ?? 0,
+        totalRecruiters: dashData?.totalTrainers ?? users.filter((u: any) => u.role === 'RECRUITER' || u.role === 'TRAINER').length,
+        totalCompanies: dashData?.totalCompanies ?? 0,
+        openJobs,
+        totalApplications,
+        hiredCount,
+        conversionRate: totalApplications > 0 ? parseFloat(((hiredCount / totalApplications) * 100).toFixed(1)) : 0,
+        activeDisputes: dashData?.activeDisputes ?? 0,
       });
-      setRecruitmentFunnel([
-        { name: 'Submitted', value: apps.length },
-        { name: 'Reviewed', value: (statusCounts.UNDER_REVIEW || 0) + (statusCounts.REVIEWED || 0) },
-        { name: 'Shortlisted', value: statusCounts.SHORTLISTED || 0 },
-        { name: 'Hired', value: statusCounts.HIRED || 0 },
-      ]);
 
-      // Job type breakdown
-      const typeCounts: Record<string, number> = {};
-      jobs.forEach((j: any) => {
-        const t = j.jobType || 'UNKNOWN';
-        typeCounts[t] = (typeCounts[t] || 0) + 1;
-      });
-      setJobTypeBreakdown(Object.entries(typeCounts).map(([name, value]) => ({ name: name.replace(/_/g, ' '), value })));
-
-      // Top skills from jobs
-      const skillCounts: Record<string, number> = {};
-      jobs.forEach((j: any) => {
-        (j.skills || []).forEach((s: string) => {
-          skillCounts[s] = (skillCounts[s] || 0) + 1;
-        });
-      });
-      const sortedSkills = Object.entries(skillCounts)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 10)
-        .map(([name, value]) => ({ date: name.length > 14 ? name.slice(0, 14) + '..' : name, value }));
-      setTopSkills(sortedSkills);
-
-      // Applications per day (last 30 days)
-      const dayMap: Record<string, number> = {};
-      const now = new Date();
-      for (let i = 29; i >= 0; i--) {
-        const d = new Date(now);
-        d.setDate(d.getDate() - i);
-        dayMap[d.toISOString().slice(5, 10)] = 0;
-      }
+      // ── Applications per day ───────────────────────────────────────────
+      const dayMap = buildDayMap(days);
       apps.forEach((a: any) => {
         const key = (a.appliedAt || a.createdAt || '').slice(5, 10);
         if (key in dayMap) dayMap[key]++;
       });
       setAppsPerDay(Object.entries(dayMap).map(([date, value]) => ({ date, value })));
+
+      // ── Sign-ups per day ───────────────────────────────────────────────
+      if (analyticsData?.signupsPerDay?.length) {
+        setSignupsPerDay(analyticsData.signupsPerDay.map((d: any) => ({ date: d.date.slice(5), value: d.count })));
+      }
+
+      // ── App status solid pie ───────────────────────────────────────────
+      const statusMap: Record<string, number> = {};
+      apps.forEach((a: any) => { statusMap[a.status] = (statusMap[a.status] || 0) + 1; });
+      setAppStatusPie(
+        STATUS_ORDER
+          .filter(s => statusMap[s] > 0)
+          .map(s => ({ name: s.replace(/_/g, ' '), value: statusMap[s] }))
+      );
+
+      // ── Hiring funnel (horizontal bar) ────────────────────────────────
+      setFunnelBar(
+        STATUS_ORDER
+          .filter(s => statusMap[s] > 0)
+          .map(s => ({ name: s.replace(/_/g, ' '), value: statusMap[s] }))
+      );
+
+      // ── Jobs by type (colored bars + solid pie) ────────────────────────
+      const typeMap: Record<string, number> = {};
+      jobs.forEach((j: any) => {
+        const t = (j.jobType || 'OTHER').replace(/_/g, ' ');
+        typeMap[t] = (typeMap[t] || 0) + 1;
+      });
+      const typeEntries = Object.entries(typeMap).map(([name, value]) => ({ name, value }));
+      setJobTypeBar(typeEntries);
+      setJobTypePie(typeEntries);
+
+      // ── Top companies by open jobs ─────────────────────────────────────
+      const compMap: Record<string, number> = {};
+      jobs.forEach((j: any) => {
+        const name = j.company?.name || 'Unknown';
+        compMap[name] = (compMap[name] || 0) + 1;
+      });
+      setTopCompaniesBar(
+        Object.entries(compMap)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 8)
+          .map(([name, value]) => ({
+            name: name.length > 16 ? name.slice(0, 16) + '…' : name,
+            value,
+          }))
+      );
+
+      // ── User growth (candidates vs recruiters per day) ─────────────────
+      const seekerDayMap = buildDayMap(days);
+      const recruiterDayMap = buildDayMap(days);
+      users.forEach((u: any) => {
+        const key = (u.createdAt || '').slice(5, 10);
+        if (u.role === 'RECRUITER' || u.role === 'TRAINER') {
+          if (key in recruiterDayMap) recruiterDayMap[key]++;
+        } else {
+          if (key in seekerDayMap) seekerDayMap[key]++;
+        }
+      });
+      setUserGrowthSeries(
+        Object.keys(seekerDayMap).map(date => ({
+          date,
+          seekers: seekerDayMap[date],
+          recruiters: recruiterDayMap[date] || 0,
+        }))
+      );
+
+      // ── Top skills in demand ───────────────────────────────────────────
+      const skillMap: Record<string, number> = {};
+      jobs.forEach((j: any) => {
+        (j.skillNames || j.skills || []).forEach((s: string) => {
+          skillMap[s] = (skillMap[s] || 0) + 1;
+        });
+      });
+      setTopSkillsBar(
+        Object.entries(skillMap)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 10)
+          .map(([name, value]) => ({ name: name.length > 16 ? name.slice(0, 16) + '…' : name, value }))
+      );
+
+      // ── Applications by location ───────────────────────────────────────
+      const locMap: Record<string, number> = {};
+      jobs.forEach((j: any) => {
+        if (j.location) {
+          const loc = j.location.split(',')[0].trim();
+          locMap[loc] = (locMap[loc] || 0) + 1;
+        }
+      });
+      setAppsByLocation(
+        Object.entries(locMap)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 8)
+          .map(([name, value]) => ({ name: name.length > 16 ? name.slice(0, 16) + '…' : name, value }))
+      );
+
     } catch {
-      // silently ignore
+      addToast('error', 'Failed to load analytics data');
     } finally {
-      setRecruitmentLoading(false);
+      setLoading(false);
     }
-  }, []);
+  }, [period, days, addToast]);
 
-  useEffect(() => { fetchOverview(); }, [fetchOverview]);
-  useEffect(() => { fetchCharts(); }, [fetchCharts]);
-  useEffect(() => { fetchRecruitmentAnalytics(); }, [fetchRecruitmentAnalytics]);
-
-  // ── Derived chart data ──────────────────────────────────────────────────────
-
-  // Revenue trend for LineTrend
-  const revenueTrendChart = (revenueData?.data || []).map((d) => ({
-    date: d.date.length > 7 ? d.date.slice(5) : d.date,
-    value: d.revenue,
-  }));
-
-  // Bookings by status for DonutBreakdown
-  const bookingStatusDonut = (bookingsData?.byStatus || [])
-    .filter((s) => s.count > 0)
-    .map((s) => ({ name: s.status, value: s.count }));
-
-  // Bookings trend for LineTrend
-  const bookingsTrendChart = (bookingsData?.trend || []).map((t) => ({
-    date: t.date.length > 7 ? t.date.slice(5) : t.date,
-    value: t.count,
-  }));
-
-  // User signups for LineSeries
-  const userSignupSeries = (usersData?.trend || []).map((t) => ({
-    date: t.date.length > 7 ? t.date.slice(5) : t.date,
-    clients: t.clients,
-    trainers: t.trainers,
-  }));
-
-  // User role distribution for DonutBreakdown
-  const userRoleDonut = (usersData?.byRole || [])
-    .filter((r) => r.count > 0)
-    .map((r) => ({ name: r.role, value: r.count }));
-
-  // Top trainers bar chart
-  const trainerRevenueBar = topTrainers.slice(0, 10).map((t) => ({
-    date: t.name.split(' ')[0],
-    value: t.totalRevenue,
-  }));
-
-  // Categories bar chart
-  const categoryBookingsBar = categories.map((c) => ({
-    date: c.name.length > 12 ? c.name.slice(0, 12) + '..' : c.name,
-    value: c.bookings,
-  }));
-
-  // Computed KPIs
-  const completionRate = overview && overview.totalBookings > 0
-    ? ((bookingsData?.byStatus?.find((s) => s.status === 'COMPLETED')?.count || 0) / overview.totalBookings * 100)
-    : 0;
-
-  const alertCount = (overview?.activeDisputes || 0) + (overview?.pendingVerifications || 0);
+  useEffect(() => { fetchAll(); }, [fetchAll]);
 
   return (
     <div>
@@ -452,12 +322,12 @@ export default function AnalyticsPage() {
         breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Analytics' }]}
       />
       <p className="text-muted-foreground -mt-4 mb-6 text-sm">
-        Platform performance, user growth, and revenue insights
+        Recruitment performance, pipeline health, and platform growth
       </p>
 
-      {/* ── Period Selector ──────────────────────────────────────────────────── */}
+      {/* ── Period Selector ──────────────────────────────────────────────── */}
       <div className="flex gap-1 p-1 rounded-lg bg-muted w-fit mb-8">
-        {PERIODS.map((p) => (
+        {PERIODS.map(p => (
           <button
             key={p.value}
             onClick={() => setPeriod(p.value)}
@@ -472,412 +342,254 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
-      {/* ── KPI Hero Row ─────────────────────────────────────────────────────── */}
-      {overviewLoading ? (
+      {/* ── Hero KPI Cards ───────────────────────────────────────────────── */}
+      {loading ? (
         <SkeletonKpiRow />
-      ) : overview ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-10">
+      ) : kpis && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4 mb-10">
           <HeroKpiCard
-            label="Total Users"
-            value={formatNumber(overview.totalUsers)}
-            badge={revenueData ? { value: revenueData.growth, label: 'period growth' } : undefined}
-            image={KPI_IMAGES.users}
+            label="Job Seekers"
+            value={formatNumber(kpis.totalJobSeekers)}
+            subtitle="Registered candidates"
+            photo={KPI_PHOTOS.seekers}
+            onClick={() => router.push('/dashboard/users')}
           />
           <HeroKpiCard
-            label="Total Trainers"
-            value={formatNumber(overview.totalTrainers)}
-            subtitle={`${overview.totalClients > 0 ? formatNumber(overview.totalClients) + ' clients' : 'Pro + Vocational'}`}
-            image={KPI_IMAGES.trainers}
+            label="Recruiters"
+            value={formatNumber(kpis.totalRecruiters)}
+            subtitle="Active hiring teams"
+            photo={KPI_PHOTOS.recruiters}
             onClick={() => router.push('/dashboard/trainers')}
           />
           <HeroKpiCard
-            label="Total Clients"
-            value={formatNumber(overview.totalClients)}
-            subtitle="Active learners"
-            image={KPI_IMAGES.clients}
+            label="Open Jobs"
+            value={formatNumber(kpis.openJobs)}
+            subtitle={`of ${formatNumber(kpis.openJobs)} total postings`}
+            photo={KPI_PHOTOS.jobs}
+            onClick={() => router.push('/dashboard/jobs')}
           />
           <HeroKpiCard
-            label="Total Bookings"
-            value={formatNumber(overview.totalBookings)}
-            subtitle={completionRate > 0 ? `${completionRate.toFixed(0)}% completion rate` : undefined}
-            image={KPI_IMAGES.bookings}
+            label="Applications"
+            value={formatNumber(kpis.totalApplications)}
+            subtitle="All time submissions"
+            photo={KPI_PHOTOS.applications}
+            onClick={() => router.push('/dashboard/applications')}
           />
           <HeroKpiCard
-            label="Total Revenue"
-            value={fmtKES(overview.totalRevenue)}
-            badge={revenueData?.growth ? { value: revenueData.growth, label: 'vs prev period' } : undefined}
-            image={KPI_IMAGES.revenue}
-            onClick={() => router.push('/dashboard/financials')}
+            label="Hired"
+            value={formatNumber(kpis.hiredCount)}
+            subtitle="Successful placements"
+            photo={KPI_PHOTOS.hired}
           />
           <HeroKpiCard
-            label="Alerts"
-            value={String(alertCount)}
-            subtitle={`${overview.activeDisputes} disputes / ${overview.pendingVerifications} pending`}
-            image={KPI_IMAGES.alerts}
-            onClick={() => router.push(overview.activeDisputes > 0 ? '/dashboard/disputes' : '/dashboard/verifications')}
+            label="Conversion Rate"
+            value={`${kpis.conversionRate}%`}
+            subtitle="Applications → hired"
+            photo={KPI_PHOTOS.conversion}
           />
         </div>
-      ) : null}
+      )}
 
       {/* ================================================================
-         SECTION 1: Revenue Analytics
+          SECTION 1 — Application Pipeline
          ================================================================ */}
       <div className="mb-10">
-        <SectionHeader
-          title="Revenue Analytics"
-          subtitle={`Revenue performance over the last ${period}`}
+        <SectionDivider
+          title="Application Pipeline"
+          subtitle={`Applications and hiring funnel over the last ${period}`}
         />
-        {chartsLoading ? (
-          <SkeletonChart className="h-[380px]" />
+        {loading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <SkeletonChart height={280} className="lg:col-span-2" />
+            <SkeletonChart height={280} />
+          </div>
         ) : (
-          <>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <LineTrend
-              title="Revenue Trend"
-              subtitle={`Platform revenue over the last ${period}`}
-              data={revenueTrendChart}
-              color={BRAND.gold}
-              name="Revenue (KES)"
-              height={320}
-            />
-            {revenueData && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                <div className="bg-card rounded-xl border border-border p-5">
-                  <p className="text-sm text-muted-foreground">Period Revenue</p>
-                  <p className="text-2xl font-bold mt-1 text-card-foreground">{fmtKES(revenueData.total)}</p>
-                </div>
-                <div className="bg-card rounded-xl border border-border p-5">
-                  <p className="text-sm text-muted-foreground">Growth</p>
-                  <p className={`text-2xl font-bold mt-1 ${revenueData.growth >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                    {revenueData.growth >= 0 ? '+' : ''}{revenueData.growth.toFixed(1)}%
-                  </p>
-                </div>
-                <div className="bg-card rounded-xl border border-border p-5">
-                  <p className="text-sm text-muted-foreground">Avg Daily</p>
-                  <p className="text-2xl font-bold mt-1 text-card-foreground">
-                    {fmtKES(revenueTrendChart.length > 0 ? revenueData.total / revenueTrendChart.length : 0)}
-                  </p>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-
-      {/* ================================================================
-         SECTION 2: Bookings Analytics
-         ================================================================ */}
-      <div className="mb-10">
-        <SectionHeader
-          title="Bookings Analytics"
-          subtitle="Booking status distribution and volume trends"
-        />
-        {chartsLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SkeletonChart />
-            <SkeletonChart />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <DonutBreakdown
-              title="Bookings by Status"
-              subtitle="Proportional breakdown of all booking statuses"
-              data={bookingStatusDonut.length > 0 ? bookingStatusDonut : [{ name: 'No data', value: 1 }]}
-              colors={bookingStatusDonut.map((s) => STATUS_COLORS[s.name] || BRAND.navy)}
-              height={300}
-            />
-            <LineTrend
-              title="Bookings Trend"
-              subtitle={`Daily booking volume over ${period}`}
-              data={bookingsTrendChart}
-              color={BRAND.navy}
-              name="Bookings"
-              height={300}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* ================================================================
-         SECTION 3: Users Analytics
-         ================================================================ */}
-      <div className="mb-10">
-        <SectionHeader
-          title="User Analytics"
-          subtitle="New signups over time and role distribution"
-        />
-        {chartsLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SkeletonChart />
-            <SkeletonChart />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <LineSeries
-              title="New Users Over Time"
-              subtitle="Client vs Trainer signups"
-              data={userSignupSeries}
-              series={[
-                { key: 'clients', name: 'Clients', color: BRAND.navy },
-                { key: 'trainers', name: 'Trainers', color: BRAND.teal },
-              ]}
-              height={300}
-            />
-            <DonutBreakdown
-              title="User Role Distribution"
-              subtitle="Platform users by role"
-              data={userRoleDonut.length > 0 ? userRoleDonut : [{ name: 'No data', value: 1 }]}
-              colors={[BRAND.navy, BRAND.teal, BRAND.gold, BRAND.purple]}
-              height={300}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* ================================================================
-         SECTION 4: Top Trainers
-         ================================================================ */}
-      <div className="mb-10">
-        <SectionHeader
-          title="Top Trainers"
-          subtitle="Highest performing trainers by revenue and rating"
-        />
-        {chartsLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SkeletonChart />
-            <SkeletonTable />
-          </div>
-        ) : (
-          <>
-            {/* Revenue Bar Chart */}
-            {trainerRevenueBar.length > 0 && (
-              <div className="mb-6">
-                <BarCompare
-                  title="Top 10 by Revenue"
-                  subtitle="Trainer earnings ranked"
-                  data={trainerRevenueBar}
-                  color={BRAND.teal}
-                  name="Revenue (KES)"
-                  height={280}
-                />
-              </div>
-            )}
-
-            {/* Detailed Table */}
-            {topTrainers.length > 0 && (
-              <div className="bg-card rounded-xl border border-border overflow-hidden">
-                <div className="px-6 py-4 border-b border-border">
-                  <h3 className="font-semibold text-card-foreground">Top Trainers Leaderboard</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">Click a row to view trainer details</p>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-muted">
-                        <th className="px-4 py-3 text-left font-medium text-muted-foreground w-12">#</th>
-                        <th className="px-4 py-3 text-left font-medium text-muted-foreground">Trainer</th>
-                        <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Email</th>
-                        <th className="px-4 py-3 text-right font-medium text-muted-foreground">Revenue</th>
-                        <th className="px-4 py-3 text-right font-medium text-muted-foreground">Bookings</th>
-                        <th className="px-4 py-3 text-right font-medium text-muted-foreground hidden sm:table-cell">Completed</th>
-                        <th className="px-4 py-3 text-right font-medium text-muted-foreground">Rating</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {topTrainers.map((t, i) => (
-                        <tr
-                          key={t.id}
-                          className="hover:bg-muted/50 transition-colors cursor-pointer"
-                          onClick={() => router.push(`/dashboard/trainers/${t.id}`)}
-                        >
-                          <td className="px-4 py-3">
-                            <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
-                              i === 0
-                                ? 'bg-[#F77B0F]/20 text-[#F77B0F]'
-                                : i === 1
-                                ? 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
-                                : i === 2
-                                ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-                                : 'bg-muted text-muted-foreground'
-                            }`}>
-                              {i + 1}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-[#F77B0F] flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                                {t.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
-                              </div>
-                              <span className="font-medium text-card-foreground">{t.name}</span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">{t.email}</td>
-                          <td className="px-4 py-3 text-right font-semibold text-[#0D9488]">
-                            {fmtKES(t.totalRevenue)}
-                          </td>
-                          <td className="px-4 py-3 text-right text-card-foreground">{t.totalBookings}</td>
-                          <td className="px-4 py-3 text-right text-card-foreground hidden sm:table-cell">{t.completedSessions}</td>
-                          <td className="px-4 py-3 text-right">{renderStars(t.averageRating)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {topTrainers.length === 0 && trainerRevenueBar.length === 0 && (
-              <div className="bg-card rounded-xl border border-border p-8 text-center">
-                <p className="text-muted-foreground text-sm">No trainer data available yet</p>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-
-      {/* ================================================================
-         SECTION 5: Categories
-         ================================================================ */}
-      <div className="mb-10">
-        <SectionHeader
-          title="Categories"
-          subtitle="Which specializations and categories get the most traction"
-        />
-        {chartsLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SkeletonChart />
-            <SkeletonTable />
-          </div>
-        ) : categories.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <BarCompare
-              title="Bookings by Category"
-              subtitle="Number of bookings per specialization"
-              data={categoryBookingsBar}
-              color={BRAND.purple}
-              name="Bookings"
-              height={300}
-            />
-            <div className="bg-card rounded-xl border border-border overflow-hidden">
-              <div className="px-6 py-4 border-b border-border">
-                <h3 className="font-semibold text-card-foreground">Revenue by Category</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">Earnings and trainer count per category</p>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-muted">
-                      <th className="px-4 py-3 text-left font-medium text-muted-foreground">Category</th>
-                      <th className="px-4 py-3 text-right font-medium text-muted-foreground">Bookings</th>
-                      <th className="px-4 py-3 text-right font-medium text-muted-foreground">Revenue</th>
-                      <th className="px-4 py-3 text-right font-medium text-muted-foreground">Trainers</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {categories.map((c, i) => (
-                      <tr key={i} className="hover:bg-muted/50 transition-colors">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: [BRAND.purple, BRAND.teal, BRAND.gold, BRAND.navy, BRAND.sky, BRAND.green, BRAND.pink, BRAND.red][i % 8] }} />
-                            <span className="font-medium text-card-foreground">{c.name}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-right text-card-foreground">{c.bookings}</td>
-                        <td className="px-4 py-3 text-right font-semibold text-[#0D9488]">{fmtKES(c.revenue)}</td>
-                        <td className="px-4 py-3 text-right text-muted-foreground">{c.trainers}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="bg-card rounded-xl border border-border p-8 text-center">
-            <p className="text-muted-foreground text-sm">No category data available yet</p>
-          </div>
-        )}
-      </div>
-
-      {/* ================================================================
-         SECTION 6: Recruitment Analytics (Uteo-specific)
-         ================================================================ */}
-      <div className="mb-10">
-        <SectionHeader
-          title="Recruitment Funnel"
-          subtitle="Applications progressing through hiring stages"
-        />
-        {recruitmentLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SkeletonChart />
-            <SkeletonChart />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Funnel bar */}
-            <BarCompare
-              title="Hiring Funnel"
-              subtitle="Applications submitted → Reviewed → Shortlisted → Hired"
-              data={recruitmentFunnel.map(f => ({ date: f.name, value: f.value }))}
-              color={BRAND.navy}
-              name="Count"
-              height={280}
-            />
-            {/* Applications per day */}
-            <BarTrend
               title="Applications Per Day"
-              subtitle="Daily application submissions (last 30 days)"
+              subtitle={`Daily submission volume — last ${period}`}
               data={appsPerDay}
-              color={BRAND.gold}
+              color="#F77B0F"
               name="Applications"
               height={280}
+              className="lg:col-span-2"
             />
-          </div>
-        )}
-      </div>
-
-      <div className="mb-10">
-        <SectionHeader
-          title="Job Market Breakdown"
-          subtitle="Top skills in demand and job type distribution"
-        />
-        {recruitmentLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SkeletonChart />
-            <SkeletonChart />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Top skills */}
-            <BarCompare
-              title="Top Skills in Demand"
-              subtitle="Most requested skills across active job postings"
-              data={topSkills.length > 0 ? topSkills : [{ date: 'No data', value: 0 }]}
-              color={BRAND.teal}
-              name="Jobs"
-              height={300}
-            />
-            {/* Job type donut */}
-            <DonutBreakdown
-              title="Job Type Distribution"
-              subtitle="Full-time / Part-time / Remote / Contract breakdown"
-              data={jobTypeBreakdown.length > 0 ? jobTypeBreakdown : [{ name: 'No data', value: 1 }]}
-              colors={[BRAND.navy, BRAND.gold, BRAND.teal, BRAND.purple, BRAND.sky, BRAND.green]}
-              height={300}
+            <PieBreakdown
+              title="By Status"
+              subtitle="Current pipeline stage breakdown"
+              data={appStatusPie.length ? appStatusPie : [{ name: 'No data', value: 1 }]}
+              colors={FUNNEL_COLORS}
+              height={280}
             />
           </div>
         )}
       </div>
 
       {/* ================================================================
-         SECTION 8: Platform Health
+          SECTION 2 — Hiring Funnel
+         ================================================================ */}
+      <div className="mb-10">
+        <SectionDivider
+          title="Hiring Funnel"
+          subtitle="How applications progress from submission to hire"
+        />
+        {loading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <SkeletonChart height={260} />
+            <SkeletonChart height={260} />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <HorizBar
+              title="Funnel Stage Counts"
+              subtitle="Volume at each stage of the hiring pipeline"
+              data={funnelBar.length ? funnelBar : STATUS_ORDER.slice(0, 5).map(s => ({ name: s.replace(/_/g, ' '), value: 0 }))}
+              colors={FUNNEL_COLORS}
+              height={260}
+            />
+            <div className="bg-card border border-border rounded-xl p-6">
+              <h3 className="font-semibold text-card-foreground mb-1">Stage Conversion Rates</h3>
+              <p className="text-xs text-muted-foreground mb-5">Drop-off between consecutive pipeline stages</p>
+              {funnelBar.length > 1 ? (
+                <div className="space-y-3">
+                  {funnelBar.slice(0, -1).map((stage, i) => {
+                    const next = funnelBar[i + 1];
+                    const rate = stage.value > 0 ? ((next.value / stage.value) * 100).toFixed(0) : '0';
+                    const pct = stage.value > 0 ? (next.value / stage.value) : 0;
+                    return (
+                      <div key={stage.name}>
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-muted-foreground">{stage.name} → {next.name}</span>
+                          <span className="font-semibold text-foreground">{rate}%</span>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                          <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(pct * 100, 100)}%`, background: FUNNEL_COLORS[i % FUNNEL_COLORS.length] }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-40 text-sm text-muted-foreground">No funnel data yet</div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ================================================================
+          SECTION 3 — Jobs Market Intelligence
+         ================================================================ */}
+      <div className="mb-10">
+        <SectionDivider
+          title="Jobs Market Intelligence"
+          subtitle="Employment type distribution and top hiring companies"
+        />
+        {loading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <SkeletonChart height={260} />
+            <SkeletonChart height={260} />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ColorBar
+              title="Jobs by Employment Type"
+              subtitle="Distribution across full-time, part-time, contract, remote"
+              data={jobTypeBar.length ? jobTypeBar : [{ name: 'Full Time', value: 0 }]}
+              colors={CHART_COLORS}
+              height={260}
+            />
+            <HorizBar
+              title="Top Hiring Companies"
+              subtitle="Companies with the most active job postings"
+              data={topCompaniesBar.length ? topCompaniesBar : [{ name: 'No data', value: 0 }]}
+              colors={CHART_COLORS}
+              height={260}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* ================================================================
+          SECTION 4 — Skills & Locations
+         ================================================================ */}
+      <div className="mb-10">
+        <SectionDivider
+          title="Skills & Location Demand"
+          subtitle="Most sought-after skills and top job locations"
+        />
+        {loading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <SkeletonChart height={280} />
+            <SkeletonChart height={280} />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <HorizBar
+              title="Top Skills in Demand"
+              subtitle="Most requested skills across active job postings"
+              data={topSkillsBar.length ? topSkillsBar : [{ name: 'No skills data', value: 0 }]}
+              colors={CHART_COLORS}
+              height={280}
+            />
+            <HorizBar
+              title="Jobs by Location"
+              subtitle="Cities and regions with the most open positions"
+              data={appsByLocation.length ? appsByLocation : [{ name: 'No location data', value: 0 }]}
+              colors={[...CHART_COLORS].reverse()}
+              height={280}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* ================================================================
+          SECTION 5 — Platform Growth
+         ================================================================ */}
+      <div className="mb-10">
+        <SectionDivider
+          title="Platform Growth"
+          subtitle="User registrations and role distribution over time"
+        />
+        {loading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <SkeletonChart height={280} className="lg:col-span-2" />
+            <SkeletonChart height={280} />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <LineSeries
+              title="User Growth Over Time"
+              subtitle="Job seekers vs recruiters signing up per day"
+              data={userGrowthSeries}
+              series={[
+                { key: 'seekers', name: 'Job Seekers', color: '#F77B0F' },
+                { key: 'recruiters', name: 'Recruiters', color: '#10B981' },
+              ]}
+              height={280}
+              className="lg:col-span-2"
+            />
+            <PieBreakdown
+              title="Job Type Mix"
+              subtitle="Employment type breakdown"
+              data={jobTypePie.length ? jobTypePie : [{ name: 'No data', value: 1 }]}
+              colors={CHART_COLORS}
+              height={280}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* ================================================================
+          SECTION 6 — Platform Health Tiles
          ================================================================ */}
       <div className="mb-6">
-        <SectionHeader
+        <SectionDivider
           title="Platform Health"
-          subtitle="Disputes, verifications, and system status at a glance"
+          subtitle="Disputes, open positions, and key operational metrics"
         />
-        {overviewLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {Array.from({ length: 4 }, (_, i) => (
               <div key={i} className="bg-card rounded-xl border border-border p-5 h-28 animate-pulse">
                 <div className="h-3 w-24 bg-muted rounded mb-3" />
@@ -886,81 +598,38 @@ export default function AnalyticsPage() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Active Disputes */}
-            <div
-              className={`rounded-xl border p-5 cursor-pointer transition-all hover:shadow-md ${
-                (overview?.activeDisputes || 0) > 0
-                  ? 'bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800'
-                  : 'bg-card border-border'
-              }`}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <StatTile
+              label="Open Jobs"
+              value={formatNumber(kpis?.openJobs ?? 0)}
+              sub="Active listings right now"
+              color="#10B981"
+              onClick={() => router.push('/dashboard/jobs')}
+            />
+            <StatTile
+              label="Pending Review"
+              value={formatNumber(appStatusPie.find(s => s.name === 'PENDING')?.value ?? 0)}
+              sub="Applications awaiting action"
+              color="#F77B0F"
+              onClick={() => router.push('/dashboard/applications')}
+            />
+            <StatTile
+              label="Active Disputes"
+              value={formatNumber(kpis?.activeDisputes ?? 0)}
+              sub={kpis?.activeDisputes ? 'Needs attention' : 'All clear'}
+              color={kpis?.activeDisputes ? '#EF4444' : '#10B981'}
               onClick={() => router.push('/dashboard/disputes')}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <svg className={`w-5 h-5 ${(overview?.activeDisputes || 0) > 0 ? 'text-red-500' : 'text-muted-foreground'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <p className="text-sm font-medium text-muted-foreground">Active Disputes</p>
-              </div>
-              <p className={`text-3xl font-bold ${(overview?.activeDisputes || 0) > 0 ? 'text-red-600 dark:text-red-400' : 'text-card-foreground'}`}>
-                {overview?.activeDisputes || 0}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">View all disputes &rarr;</p>
-            </div>
-
-            {/* Pending Verifications */}
-            <div
-              className={`rounded-xl border p-5 cursor-pointer transition-all hover:shadow-md ${
-                (overview?.pendingVerifications || 0) > 0
-                  ? 'bg-amber-50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800'
-                  : 'bg-card border-border'
-              }`}
-              onClick={() => router.push('/dashboard/verifications')}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <svg className={`w-5 h-5 ${(overview?.pendingVerifications || 0) > 0 ? 'text-amber-500' : 'text-muted-foreground'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-                <p className="text-sm font-medium text-muted-foreground">Pending Verifications</p>
-              </div>
-              <p className={`text-3xl font-bold ${(overview?.pendingVerifications || 0) > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-card-foreground'}`}>
-                {overview?.pendingVerifications || 0}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">Review verifications &rarr;</p>
-            </div>
-
-            {/* Escrow in Transit */}
-            <div
-              className="bg-card rounded-xl border border-border p-5 cursor-pointer transition-all hover:shadow-md"
-              onClick={() => router.push('/dashboard/financials')}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <svg className="w-5 h-5 text-[#6366F1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                <p className="text-sm font-medium text-muted-foreground">Escrow in Transit</p>
-              </div>
-              <p className="text-3xl font-bold text-card-foreground">--</p>
-              <p className="text-xs text-muted-foreground mt-1">View financials &rarr;</p>
-            </div>
-
-            {/* Platform Wallet */}
-            <div
-              className="bg-card rounded-xl border border-border p-5 cursor-pointer transition-all hover:shadow-md"
-              onClick={() => router.push('/dashboard/financials')}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <svg className="w-5 h-5 text-[#0D9488]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                </svg>
-                <p className="text-sm font-medium text-muted-foreground">Platform Wallet</p>
-              </div>
-              <p className="text-3xl font-bold text-[#0D9488]">{fmtKES(overview?.totalRevenue || 0)}</p>
-              <p className="text-xs text-muted-foreground mt-1">View wallet &rarr;</p>
-            </div>
+            />
+            <StatTile
+              label="Conversion Rate"
+              value={`${kpis?.conversionRate ?? 0}%`}
+              sub="Applications → hired"
+              color="#8B5CF6"
+            />
           </div>
         )}
       </div>
+
     </div>
   );
 }
