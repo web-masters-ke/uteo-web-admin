@@ -177,9 +177,9 @@ export default function AnalyticsPage() {
     try {
       const [dashData, appsData, jobsData, usersData, analyticsData] = await Promise.all([
         analyticsService.getDashboard().catch(() => null),
-        applicationAdminService.list({ limit: 500, page: 1 }).catch(() => ({ items: [], total: 0 })),
-        jobService.list({ limit: 500, page: 1 }).catch(() => ({ items: [], total: 0 })),
-        userService.getAll({ page: 1, limit: 500 }).catch(() => ({ items: [], total: 0 })),
+        applicationAdminService.list({ limit: 100, page: 1 }).catch(() => ({ items: [], total: 0 })),
+        jobService.list({ limit: 100, page: 1 }).catch(() => ({ items: [], total: 0 })),
+        userService.getAll({ page: 1, limit: 100 }).catch(() => ({ items: [], total: 0 })),
         analyticsService.getAnalytics(undefined, undefined, days).catch(() => null),
       ]);
 
