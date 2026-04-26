@@ -17,10 +17,10 @@ export interface HealthData {
 }
 
 export interface RiskMetrics {
-  fraudFlagRate: number;
-  refundRate: number;
-  openDisputes: number;
-  ledgerBalanced: boolean;
+  pendingVerifications: number;
+  failedNotifications: number;
+  openApplications: number;
+  activeJobs: number;
 }
 
 export interface LatencyPoint {
@@ -40,13 +40,22 @@ export const systemService = {
   },
 
   getRiskMetrics: async (): Promise<RiskMetrics> => {
-    try {
-      const res = await api.get('/admin/risk-metrics');
-      return unwrap<RiskMetrics>(res);
-    } catch {
-      // Return placeholder if endpoint doesn't exist yet
-      return { fraudFlagRate: 0, refundRate: 0, openDisputes: 0, ledgerBalanced: true };
-    }
+    const safe = (p: Promise<any>) => p.catch(() => null);
+    const [pending, failed, apps, jobs] = await Promise.all([
+      safe(api.get('/trainers?limit=1&verificationStatus=PENDING')),
+      safe(api.get('/notifications?limit=1&status=FAILED')),
+      safe(api.get('/applications?limit=1&status=PENDING')),
+      safe(api.get('/jobs?limit=1&status=ACTIVE')),
+    ]);
+    const extract = (res: any) => {
+      try { const d = unwrap<any>(res); return d?.total ?? d?.pagination?.total ?? 0; } catch { return 0; }
+    };
+    return {
+      pendingVerifications: extract(pending),
+      failedNotifications: extract(failed),
+      openApplications: extract(apps),
+      activeJobs: extract(jobs),
+    };
   },
 
   getLatencyMetrics: async (): Promise<LatencyPoint[]> => {

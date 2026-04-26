@@ -133,22 +133,23 @@ export default function SystemHealthPage() {
   return (
     <div>
       <PageHeader
-        title="System Health"
+        title="Platform Health"
         breadcrumbs={[
           { label: 'Dashboard', href: '/dashboard' },
-          { label: 'System Health' },
+          { label: 'Platform Health' },
         ]}
         actions={
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <span className="text-xs text-muted-foreground">
-              Last refresh: {lastRefresh.toLocaleTimeString()} · auto-refreshes every 30s
+              {lastRefresh.toLocaleTimeString()} · auto every 30s
             </span>
             <button
               onClick={fetchAll}
               disabled={loading}
-              className="px-4 py-2 rounded-lg border border-border bg-card text-sm font-medium hover:bg-muted transition-colors disabled:opacity-50"
+              className="flex items-center gap-1.5 text-sm font-semibold text-[#F77B0F] hover:underline disabled:opacity-40 transition-opacity"
             >
-              {loading ? 'Refreshing…' : 'Refresh Now'}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+              {loading ? 'Refreshing…' : 'Refresh'}
             </button>
           </div>
         }
@@ -190,44 +191,37 @@ export default function SystemHealthPage() {
         )}
       </section>
 
-      {/* Operational Risk Dashboard */}
+      {/* Platform Metrics */}
       <section className="mb-8">
-        <h2 className="text-base font-bold text-card-foreground mb-4">Operational Risk</h2>
+        <h2 className="text-base font-bold text-card-foreground mb-4">Platform Metrics</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {riskMetrics ? (
             <>
               <RiskCard
-                label="Fraud Flag Rate"
-                value={riskMetrics.fraudFlagRate.toFixed(2)}
-                unit="%"
-                highlight={riskMetrics.fraudFlagRate > 5}
+                label="Pending Verifications"
+                value={formatNumber(riskMetrics.pendingVerifications)}
+                highlight={riskMetrics.pendingVerifications > 0}
               />
               <RiskCard
-                label="Refund Rate"
-                value={riskMetrics.refundRate.toFixed(2)}
-                unit="%"
-                highlight={riskMetrics.refundRate > 10}
+                label="Failed Notifications"
+                value={formatNumber(riskMetrics.failedNotifications)}
+                highlight={riskMetrics.failedNotifications > 0}
               />
               <RiskCard
-                label="Open Disputes"
-                value={formatNumber(riskMetrics.openDisputes)}
-                highlight={riskMetrics.openDisputes > 0}
+                label="Open Applications"
+                value={formatNumber(riskMetrics.openApplications)}
               />
-              <div className={`bg-card rounded-xl border p-5 ${!riskMetrics.ledgerBalanced ? 'border-red-200 dark:border-red-800' : 'border-border'}`}>
-                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">Ledger Balance</p>
-                <span className={`inline-flex items-center gap-1.5 text-sm font-bold ${riskMetrics.ledgerBalanced ? 'text-green-600 dark:text-green-400' : 'text-red-500'}`}>
-                  <span className={`inline-block w-2 h-2 rounded-full ${riskMetrics.ledgerBalanced ? 'bg-green-500' : 'bg-red-500'}`} />
-                  {riskMetrics.ledgerBalanced ? 'Balanced' : 'IMBALANCED'}
-                </span>
-              </div>
+              <RiskCard
+                label="Active Jobs"
+                value={formatNumber(riskMetrics.activeJobs)}
+              />
             </>
           ) : (
             <>
-              {['Fraud Flag Rate', 'Refund Rate', 'Open Disputes', 'Ledger Balance'].map((label) => (
+              {['Pending Verifications', 'Failed Notifications', 'Open Applications', 'Active Jobs'].map((label) => (
                 <div key={label} className="bg-card rounded-xl border border-border p-5">
                   <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">{label}</p>
                   <p className="text-2xl font-bold text-muted-foreground">—</p>
-                  <p className="text-xs text-muted-foreground mt-1">Metrics endpoint not available</p>
                 </div>
               ))}
             </>

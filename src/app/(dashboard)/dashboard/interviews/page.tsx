@@ -52,7 +52,7 @@ export default function InterviewsAdminPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const d = await unwrap<{ items: Application[] }>(api.get('/applications?status=INTERVIEW&limit=100'));
+      const d = await unwrap<{ items: Application[] }>(await api.get('/applications?status=INTERVIEW&limit=100'));
       setInterviews(d.items ?? []);
     } catch { addToast('error', 'Failed to load interviews'); }
     finally { setLoading(false); }
@@ -82,7 +82,7 @@ export default function InterviewsAdminPage() {
     setAiLoading(true);
     try {
       const name = `${app.user.firstName ?? ''} ${app.user.lastName ?? ''}`.trim();
-      const qs = await unwrap<string[]>(api.post('/ai/interview-questions', {
+      const qs = await unwrap<string[]>(await api.post('/ai/interview-questions', {
         jobTitle: app.job?.title ?? '',
         skills: [],
         candidateName: name,
@@ -241,7 +241,7 @@ export default function InterviewsAdminPage() {
       </div>
 
       {/* Detail Modal */}
-      <Modal open={detailOpen} onClose={() => setDetailOpen(false)} title="Interview Detail" size="lg">
+      <Modal isOpen={detailOpen} onClose={() => setDetailOpen(false)} title="Interview Detail" size="lg">
         {selectedApp && (
           <div className="space-y-5">
             <div className="grid grid-cols-2 gap-4 text-sm">
@@ -277,7 +277,7 @@ export default function InterviewsAdminPage() {
       </Modal>
 
       {/* Schedule/Edit Modal */}
-      <Modal open={scheduleOpen} onClose={() => setScheduleOpen(false)} title="Schedule Interview" size="lg">
+      <Modal isOpen={scheduleOpen} onClose={() => setScheduleOpen(false)} title="Schedule Interview" size="lg">
         <div className="space-y-5 max-h-[70vh] overflow-y-auto pr-1">
           {schedApp && (
             <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center gap-3">
@@ -366,10 +366,10 @@ export default function InterviewsAdminPage() {
             <textarea value={schedNotes} onChange={e => setSchedNotes(e.target.value)} className={ic} rows={3} placeholder="Preparation notes, topics to cover, dress code, parking info…" />
           </div>
 
-          <div className="flex gap-3 pt-1">
-            <button onClick={() => setScheduleOpen(false)} className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Cancel</button>
-            <button onClick={saveSchedule} disabled={schedSaving} className="flex-1 py-2.5 rounded-xl bg-[#F77B0F] text-white text-sm font-bold hover:bg-[#e06a0d] disabled:opacity-40 transition-colors">
-              {schedSaving ? 'Saving…' : 'Save Interview'}
+          <div className="flex items-center justify-between pt-1">
+            <button onClick={() => setScheduleOpen(false)} className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Cancel</button>
+            <button onClick={saveSchedule} disabled={schedSaving} className="flex items-center gap-1.5 text-sm font-semibold text-[#F77B0F] hover:underline disabled:opacity-40 transition-opacity">
+              {schedSaving ? <><span className="w-3.5 h-3.5 border-2 border-[#F77B0F] border-t-transparent rounded-full animate-spin" />Saving…</> : 'Save Interview →'}
             </button>
           </div>
         </div>

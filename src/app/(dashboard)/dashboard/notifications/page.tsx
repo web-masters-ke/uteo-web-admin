@@ -13,7 +13,13 @@ import { useToast } from '@/lib/toast';
 import { formatDateTime } from '@/lib/utils';
 
 const CHANNELS = ['EMAIL', 'SMS', 'PUSH', 'IN_APP'] as const;
-const ROLES = ['CLIENT', 'TRAINER', 'ADMIN', 'SUPER_ADMIN', 'SUPPORT'] as const;
+const ROLES = [
+  { value: 'CLIENT', label: 'Job Seekers' },
+  { value: 'TRAINER', label: 'Recruiters' },
+  { value: 'ADMIN', label: 'Admins' },
+  { value: 'SUPER_ADMIN', label: 'Super Admins' },
+  { value: 'SUPPORT', label: 'Support Team' },
+] as const;
 
 type SendMode = 'single' | 'bulk';
 
@@ -418,7 +424,7 @@ export default function NotificationsPage() {
                 >
                   <option value="">Select role...</option>
                   {ROLES.map((r) => (
-                    <option key={r} value={r}>{r.replace(/_/g, ' ')}</option>
+                    <option key={r.value} value={r.value}>{r.label}</option>
                   ))}
                 </select>
               </div>

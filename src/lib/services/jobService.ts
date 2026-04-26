@@ -9,13 +9,41 @@ export interface AdminJob {
   location?: string;
   salaryMin?: number;
   salaryMax?: number;
+  currency?: string;
   description?: string;
   requirements?: string;
+  experienceLevel?: string;
+  remotePolicy?: string;
+  expiresAt?: string;
   skills?: string[];
   createdAt: string;
   company: { id: string; name: string; isVerified: boolean };
   postedBy: { id: string; email: string };
   _count?: { applications: number };
+}
+
+export interface HiringStage {
+  order: number;
+  name: string;
+  description?: string;
+}
+
+export interface CreateJobPayload {
+  companyId: string;
+  title: string;
+  description: string;
+  requirements?: string;
+  jobType?: string;
+  location?: string;
+  experienceLevel?: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  currency?: string;
+  expiresAt?: string;
+  skillIds?: string[];
+  hiringStages?: HiringStage[];
+  postedById?: string;
+  status?: string;
 }
 
 export const jobService = {
@@ -27,6 +55,10 @@ export const jobService = {
   },
   get: async (id: string): Promise<AdminJob> => {
     const res = await api.get(`/jobs/${id}`);
+    return unwrap<AdminJob>(res);
+  },
+  create: async (payload: CreateJobPayload): Promise<AdminJob> => {
+    const res = await api.post('/jobs', payload);
     return unwrap<AdminJob>(res);
   },
   updateStatus: async (id: string, status: string): Promise<AdminJob> => {

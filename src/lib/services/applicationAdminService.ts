@@ -4,9 +4,27 @@ export interface AdminApplication {
   id: string;
   status: string;
   appliedAt: string;
+  updatedAt: string;
   coverLetter?: string;
-  user: { id: string; email: string; firstName?: string; lastName?: string };
-  job: { id: string; title: string; company: { name: string } };
+  resumeUrl?: string;
+  notes?: string;
+  scheduledAt?: string;
+  meetingLink?: string;
+  user: { id: string; email: string; firstName?: string; lastName?: string; avatar?: string };
+  job: {
+    id: string;
+    title: string;
+    jobType?: string;
+    location?: string;
+    company: { id: string; name: string; logoUrl?: string };
+  };
+}
+
+export interface UpdateApplicationStatusPayload {
+  status: string;
+  notes?: string;
+  scheduledAt?: string;
+  meetingLink?: string;
 }
 
 export const applicationAdminService = {
@@ -19,5 +37,12 @@ export const applicationAdminService = {
   get: async (id: string): Promise<AdminApplication> => {
     const res = await api.get(`/applications/${id}`);
     return unwrap<AdminApplication>(res);
+  },
+  updateStatus: async (id: string, payload: UpdateApplicationStatusPayload): Promise<AdminApplication> => {
+    const res = await api.patch(`/applications/${id}/status`, payload);
+    return unwrap<AdminApplication>(res);
+  },
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/applications/${id}`);
   },
 };

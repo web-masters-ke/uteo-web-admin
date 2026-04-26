@@ -14,9 +14,13 @@ const ACTION_COLORS: Record<string, string> = {
   UPDATE: 'text-blue-600 dark:text-blue-400',
   DELETE: 'text-red-600 dark:text-red-400',
   LOGIN: 'text-purple-600 dark:text-purple-400',
-  LOGOUT: 'text-gray-600 dark:text-gray-400',
+  LOGOUT: 'text-gray-500 dark:text-gray-400',
   APPROVE: 'text-green-600 dark:text-green-400',
+  VERIFY: 'text-green-600 dark:text-green-400',
   REJECT: 'text-red-600 dark:text-red-400',
+  SUSPEND: 'text-amber-600 dark:text-amber-400',
+  ACTIVATE: 'text-emerald-600 dark:text-emerald-400',
+  PUBLISH: 'text-[#F77B0F]',
   RESOLVE: 'text-amber-600 dark:text-amber-400',
 };
 
@@ -32,8 +36,9 @@ function getSeverity(log: AuditLog): string {
   // Derive severity from action if not explicitly present
   const meta = log.metadata as Record<string, any> | undefined;
   if (meta?.severity) return String(meta.severity).toUpperCase();
-  if (['DELETE', 'REJECT'].includes(log.action)) return 'WARN';
+  if (['DELETE', 'REJECT', 'SUSPEND'].includes(log.action)) return 'WARN';
   if (['LOGIN', 'LOGOUT'].includes(log.action)) return 'INFO';
+  if (['VERIFY', 'APPROVE', 'ACTIVATE'].includes(log.action)) return 'INFO';
   return 'INFO';
 }
 
@@ -227,13 +232,13 @@ export default function AuditLogsPage() {
   return (
     <div>
       <PageHeader
-        title="Audit Logs"
-        breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Audit Logs' }]}
+        title="Activity Log"
+        breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Activity Log' }]}
         actions={
           <button
             onClick={exportCsv}
             disabled={logs.length === 0}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-sm font-medium hover:bg-muted transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 text-sm font-semibold text-[#F77B0F] hover:underline disabled:opacity-40 transition-opacity"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
             Export CSV
@@ -274,7 +279,7 @@ export default function AuditLogsPage() {
           className={`${ic} w-40`}
         >
           <option value="">All Actions</option>
-          {['CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'APPROVE', 'REJECT', 'RESOLVE'].map(
+          {['CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'APPROVE', 'REJECT', 'VERIFY', 'SUSPEND', 'ACTIVATE', 'PUBLISH', 'RESOLVE'].map(
             (a) => (
               <option key={a} value={a}>{a}</option>
             )
@@ -291,9 +296,9 @@ export default function AuditLogsPage() {
           className={`${ic} w-40`}
         >
           <option value="">All Resources</option>
-          {['USER', 'BOOKING', 'PAYMENT', 'ESCROW', 'DISPUTE', 'TRAINER', 'REVIEW', 'SUBSCRIPTION', 'COMMISSION', 'COURSE', 'SETTINGS'].map(
+          {['USER', 'JOB', 'APPLICATION', 'COMPANY', 'INTERVIEW', 'RECRUITER', 'CANDIDATE', 'NOTIFICATION', 'FEATURE_FLAG', 'SETTINGS'].map(
             (r) => (
-              <option key={r} value={r}>{r}</option>
+              <option key={r} value={r}>{r.replace(/_/g, ' ')}</option>
             )
           )}
         </select>

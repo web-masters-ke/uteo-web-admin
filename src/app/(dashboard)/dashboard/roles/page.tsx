@@ -3,17 +3,17 @@ import { useState } from 'react';
 
 const ROLES = [
   { name: 'SUPER_ADMIN', label: 'Super Admin', desc: 'Full access to everything', color: 'text-red-500', count: 1 },
-  { name: 'ADMIN', label: 'Admin', desc: 'Manage users, trainers, content and operations', color: 'text-orange-500', count: 3 },
-  { name: 'FINANCE_ADMIN', label: 'Finance Admin', desc: 'Wallets, payments, reconciliation, escrow', color: 'text-blue-500', count: 2 },
-  { name: 'SUPPORT', label: 'Support', desc: 'View users, bookings, reviews and disputes', color: 'text-green-500', count: 5 },
+  { name: 'ADMIN', label: 'Admin', desc: 'Manage job seekers, recruiters, jobs and platform operations', color: 'text-orange-500', count: 3 },
+  { name: 'FINANCE_ADMIN', label: 'Finance Admin', desc: 'Billing, subscription plans, revenue reports', color: 'text-blue-500', count: 2 },
+  { name: 'SUPPORT', label: 'Support', desc: 'View users, applications, interviews and jobs', color: 'text-green-500', count: 5 },
   { name: 'ANALYST', label: 'Analyst', desc: 'Read-only access to analytics and reports', color: 'text-purple-500', count: 2 },
 ];
 
 const PERMISSIONS: Record<string, string[]> = {
   SUPER_ADMIN: ['All permissions'],
-  ADMIN: ['Manage users', 'Manage trainers', 'Manage courses', 'Manage bookings', 'Manage disputes', 'Manage skills', 'Manage verifications', 'Send notifications', 'Moderation'],
-  FINANCE_ADMIN: ['View wallets', 'Process payments', 'View transactions', 'Reconciliation', 'View escrow', 'View commissions', 'View subscriptions'],
-  SUPPORT: ['View users', 'View trainers', 'View bookings', 'View disputes', 'View reviews', 'View notifications'],
+  ADMIN: ['Manage job seekers', 'Manage recruiters', 'Manage jobs', 'Manage applications', 'Manage companies', 'Manage interviews', 'Manage skills', 'Manage verifications', 'Send notifications', 'Content moderation'],
+  FINANCE_ADMIN: ['View revenue reports', 'View subscription plans', 'Export financial data', 'View billing history'],
+  SUPPORT: ['View job seekers', 'View recruiters', 'View applications', 'View interviews', 'View jobs', 'View notifications'],
   ANALYST: ['View analytics', 'View reports', 'Export data'],
 };
 
