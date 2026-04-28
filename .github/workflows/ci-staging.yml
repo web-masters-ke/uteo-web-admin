@@ -1,0 +1,303 @@
+# Uteo Web Admin — Staging CI/CD
+# Adapted from wasaa-ci-shared-workflows ci-staging template.
+#
+# Repo variables to set (Settings → Variables):
+#   HELM_CHART_PATH   = charts/uteo-web-admin
+#   ARGOCD_APP_NAME   = uteo-web-admin
+#   SKIP_BUILD_TEST   = true   (optional — skips lint/test if no test suite)
+#
+# Repo secrets to set (Settings → Secrets):
+#   HELM_CHARTS_PAT   = PAT with write access to helm-charts-on-prem
+#   ARGOCD_TOKEN      = ArgoCD API token (argocd.wasaachat.com)
+
+name: CI - Staging
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  security-events: write
+  pull-requests: write
+
+env:
+  ENVIRONMENT: staging
+  REGISTRY: ghcr.io
+  ORG: web-masters-ke
+  SERVICE_NAME: ${{ github.event.repository.name }}
+  HELM_REPO: ${{ vars.HELM_REPO || 'web-masters-ke/helm-charts-on-prem' }}
+  HELM_BRANCH: ${{ vars.HELM_BRANCH || 'main' }}
+  ARGOCD_URL: https://argocd.wasaachat.com
+
+jobs:
+  build-test:
+    name: Build & Test
+    if: vars.SKIP_BUILD_TEST != 'true'
+    runs-on: wasaa-org-runners
+    timeout-minutes: 20
+    outputs:
+      node_project: ${{ steps.detect.outputs.node_project }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect project type
+        id: detect
+        run: echo "node_project=$([[ -f package.json ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        if: steps.detect.outputs.node_project == 'true'
+        run: |
+          npm config set cache /home/runner/_work/.npm-cache
+          if [ -f package-lock.json ]; then npm ci --ignore-scripts && npm rebuild
+          else npm install --legacy-peer-deps --ignore-scripts && npm rebuild; fi
+
+      - name: Lint
+        if: steps.detect.outputs.node_project == 'true'
+        continue-on-error: true
+        run: |
+          if npm run --silent 2>/dev/null | grep -q "^  lint"; then npm run lint
+          else echo "No lint script — skipping"; fi
+
+      - name: Test
+        if: steps.detect.outputs.node_project == 'true'
+        run: |
+          if npm run --silent 2>/dev/null | grep -q "^  test:run"; then npm run test:run
+          elif npm run --silent 2>/dev/null | grep -q "^  test"; then
+            npm run test -- --forceExit --testTimeout=30000
+          else echo "No test script — skipping"; fi
+
+  security-scan:
+    name: Security Scan
+    needs: build-test
+    if: always() && !failure() && !cancelled()
+    runs-on: wasaa-org-runners
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Secret Detection (Gitleaks)
+        run: |
+          CONFIG_ARG=""
+          [ -f .gitleaks.toml ] && CONFIG_ARG="--config .gitleaks.toml"
+          if command -v gitleaks &>/dev/null; then
+            gitleaks detect --no-git --source . \
+              --report-format json --report-path gitleaks-report.json \
+              --exit-code 1 --log-level warn $CONFIG_ARG
+          else
+            docker run --rm -v "$(pwd):/scan" zricethezav/gitleaks:v8.24.3 \
+              detect --no-git --source /scan \
+              --report-format json --report-path /scan/gitleaks-report.json \
+              --exit-code 1 --log-level warn
+          fi
+
+      - name: Filesystem Scan (Trivy)
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-fs-results.sarif
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '0'
+
+      - name: Upload security artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-scan-results
+          path: |
+            trivy-fs-results.sarif
+            gitleaks-report.json
+          retention-days: 14
+
+  build-push:
+    name: Build & Push Image
+    needs: security-scan
+    if: always() && needs.security-scan.result == 'success'
+    runs-on: wasaa-org-runners
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      version_tag: ${{ steps.version.outputs.tag }}
+      image: ${{ steps.version.outputs.image }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate version tag
+        id: version
+        run: |
+          SHA=$(git rev-parse --short HEAD)
+          TIMESTAMP=$(date +%Y%m%d%H%M)
+          TAG="${ENVIRONMENT}-${TIMESTAMP}-${SHA}"
+          IMAGE="${REGISTRY}/${ORG}/${SERVICE_NAME}"
+          echo "tag=${TAG}"     >> $GITHUB_OUTPUT
+          echo "image=${IMAGE}" >> $GITHUB_OUTPUT
+
+      - uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.version.outputs.image }}:${{ steps.version.outputs.tag }}
+            ${{ steps.version.outputs.image }}:latest-staging
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+
+  update-helm:
+    name: Update Helm Values
+    needs: build-push
+    if: always() && needs.build-push.result == 'success'
+    runs-on: wasaa-org-runners
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout helm-charts-on-prem
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.HELM_REPO }}
+          ref: ${{ env.HELM_BRANCH }}
+          token: ${{ secrets.HELM_CHARTS_PAT }}
+          path: helm-charts
+          fetch-depth: 2
+
+      - name: Update image tag
+        env:
+          NEW_TAG: ${{ needs.build-push.outputs.version_tag }}
+          IMAGE_PATH: ${{ vars.HELM_IMAGE_PATH || 'image.tag' }}
+          CHART_PATH: ${{ vars.HELM_CHART_PATH || format('charts/{0}', github.event.repository.name) }}
+        run: |
+          VALUES="helm-charts/${CHART_PATH}/values.yaml"
+          if [ ! -f "$VALUES" ]; then
+            echo "::error::values.yaml not found at ${VALUES}"; exit 1
+          fi
+          echo "Updating ${IMAGE_PATH} → ${NEW_TAG}"
+          sed -i "s/^\(\s*tag:\s*\).*/\1${NEW_TAG}/" "$VALUES"
+          grep "tag:" "$VALUES" | head -3
+
+      - name: Commit and push
+        env:
+          NEW_TAG: ${{ needs.build-push.outputs.version_tag }}
+          CHART_PATH: ${{ vars.HELM_CHART_PATH || format('charts/{0}', github.event.repository.name) }}
+        run: |
+          cd helm-charts
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add "${CHART_PATH}/values.yaml"
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "ci(staging): update ${SERVICE_NAME} → ${NEW_TAG}"
+          for i in 1 2 3 4 5; do
+            git push origin ${{ env.HELM_BRANCH }} && break
+            git pull --rebase origin ${{ env.HELM_BRANCH }}
+            sleep $((i * 2))
+          done
+
+  trigger-argocd:
+    name: Trigger ArgoCD Sync
+    needs: [build-push, update-helm]
+    if: always() && needs.build-push.result == 'success' && needs.update-helm.result == 'success'
+    runs-on: wasaa-org-runners
+    timeout-minutes: 10
+    outputs:
+      sync_status: ${{ steps.wait.outputs.sync_status }}
+      health_status: ${{ steps.wait.outputs.health_status }}
+
+    steps:
+      - name: Resolve ArgoCD app name
+        id: app
+        run: |
+          CUSTOM="${{ vars.ARGOCD_APP_NAME }}"
+          if [ -n "$CUSTOM" ]; then echo "name=${CUSTOM}" >> $GITHUB_OUTPUT; exit 0; fi
+          echo "name=${SERVICE_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Trigger sync
+        id: sync
+        env:
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+          APP_NAME: ${{ steps.app.outputs.name }}
+        run: |
+          if [ -z "$ARGOCD_TOKEN" ]; then
+            echo "::warning::ARGOCD_TOKEN not set — skipping"
+            echo "sync_triggered=false" >> $GITHUB_OUTPUT; exit 0
+          fi
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "${ARGOCD_URL}/api/v1/applications/${APP_NAME}/sync" \
+            -H "Authorization: Bearer ${ARGOCD_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{"prune":true,"dryRun":false,"force":false}')
+          [[ "$HTTP" == "200" ]] && echo "sync_triggered=true" >> $GITHUB_OUTPUT \
+            || { echo "::warning::ArgoCD returned HTTP ${HTTP}"; echo "sync_triggered=false" >> $GITHUB_OUTPUT; }
+
+      - name: Wait for health
+        id: wait
+        env:
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+          APP_NAME: ${{ steps.app.outputs.name }}
+        run: |
+          if [ -z "$ARGOCD_TOKEN" ] || [ "${{ steps.sync.outputs.sync_triggered }}" != "true" ]; then
+            echo "sync_status=Skipped" >> $GITHUB_OUTPUT
+            echo "health_status=Unknown" >> $GITHUB_OUTPUT; exit 0
+          fi
+          TIMEOUT=240; INTERVAL=15; ELAPSED=0
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            RESP=$(curl -sf "${ARGOCD_URL}/api/v1/applications/${APP_NAME}" \
+              -H "Authorization: Bearer ${ARGOCD_TOKEN}" 2>/dev/null || echo '{}')
+            SYNC=$(echo "$RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('status',{}).get('sync',{}).get('status','Unknown'))" 2>/dev/null || echo Unknown)
+            HEALTH=$(echo "$RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('status',{}).get('health',{}).get('status','Unknown'))" 2>/dev/null || echo Unknown)
+            echo "[${ELAPSED}s] sync=${SYNC} health=${HEALTH}"
+            if [ "$SYNC" = "Synced" ] && [ "$HEALTH" = "Healthy" ]; then
+              echo "sync_status=Synced" >> $GITHUB_OUTPUT
+              echo "health_status=Healthy" >> $GITHUB_OUTPUT; exit 0
+            fi
+            sleep $INTERVAL; ELAPSED=$((ELAPSED + INTERVAL))
+          done
+          echo "sync_status=Timeout" >> $GITHUB_OUTPUT
+          echo "health_status=Unknown" >> $GITHUB_OUTPUT
+
+  report:
+    name: Deployment Report
+    needs: [build-test, security-scan, build-push, update-helm, trigger-argocd]
+    if: always()
+    runs-on: wasaa-org-runners
+    timeout-minutes: 5
+    steps:
+      - name: Summary
+        env:
+          VERSION_TAG: ${{ needs.build-push.outputs.version_tag || 'N/A' }}
+          SYNC_STATUS: ${{ needs.trigger-argocd.outputs.sync_status || 'Skipped' }}
+          HEALTH_STATUS: ${{ needs.trigger-argocd.outputs.health_status || 'N/A' }}
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## Staging Deploy — ${SERVICE_NAME}
+          | | |
+          |---|---|
+          | **Tag** | \`${VERSION_TAG}\` |
+          | **ArgoCD** | ${SYNC_STATUS} / ${HEALTH_STATUS} |
+          | **Commit** | [\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}) |
+          EOF
