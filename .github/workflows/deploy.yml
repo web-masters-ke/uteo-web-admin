@@ -39,8 +39,8 @@ jobs:
           context: .
           file: ./Dockerfile
           build-args: |
-            NEXT_PUBLIC_API_URL=https://api.uteo.co.ke/api/v1
-            NEXT_PUBLIC_CLIENT_URL=https://app.uteo.co.ke
+            NEXT_PUBLIC_API_URL=https://api.uteo.ai/api/v1
+            NEXT_PUBLIC_CLIENT_URL=https://uteo.ai
           push: true
           tags: |
             ghcr.io/web-masters-ke/uteo-web-admin:${{ github.sha }}
