@@ -96,7 +96,7 @@ export default function SystemHealthPage() {
   const [riskMetrics, setRiskMetrics] = useState<RiskMetrics | null>(null);
   const [latency, setLatency] = useState<LatencyPoint[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
@@ -141,7 +141,7 @@ export default function SystemHealthPage() {
         actions={
           <div className="flex items-center gap-4">
             <span className="text-xs text-muted-foreground">
-              {lastRefresh.toLocaleTimeString()} · auto every 30s
+              {lastRefresh ? lastRefresh.toLocaleTimeString() : '—'} · auto every 30s
             </span>
             <button
               onClick={fetchAll}
