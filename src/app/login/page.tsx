@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { authService } from '@/lib/services/authService';
 import { useToast } from '@/lib/toast';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,6 +37,13 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
+
+      {/* Theme toggle pinned top-right */}
+      <div className="absolute top-5 right-5 z-20">
+        <div className="rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-white p-1.5 hover:bg-white/25 transition-colors">
+          <ThemeToggle />
+        </div>
+      </div>
 
       {/* Background image */}
       <img
