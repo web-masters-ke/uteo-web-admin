@@ -163,6 +163,9 @@ jobs:
         with:
           context: .
           push: true
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://api.uteo.ai/api/v1
+            NEXT_PUBLIC_CLIENT_URL=https://uteo.ai
           tags: |
             ${{ steps.version.outputs.image }}:${{ steps.version.outputs.tag }}
             ${{ steps.version.outputs.image }}:latest-staging
