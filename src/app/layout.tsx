@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   title: 'Uteo Admin — Connecting Professionals with Expert Trainers.',
-  description: 'Uteo admin console — Professional Trainers Association of Kenya.',
+  description: 'Uteo admin console — Uteo.',
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',

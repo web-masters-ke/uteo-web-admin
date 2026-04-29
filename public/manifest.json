@@ -1,7 +1,7 @@
 {
-  "name": "PTAK Admin",
-  "short_name": "PTAK Admin",
-  "description": "PTAK admin console — Connecting Professionals with Expert Trainers.",
+  "name": "Uteo Admin",
+  "short_name": "Uteo Admin",
+  "description": "Uteo admin console — Connecting Professionals with Expert Trainers.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F8FAFC",
