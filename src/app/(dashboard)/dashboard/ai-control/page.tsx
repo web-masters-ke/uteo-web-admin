@@ -274,7 +274,7 @@ function JobEnhancerTab() {
         <div className="mt-2 space-y-3">
           {result.unchanged ? (
             <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-sm text-amber-700 dark:text-amber-400">
-              AI enhancement unavailable right now — the description was returned unchanged. Check that the Anthropic API key is configured.
+              AI enhancement unavailable right now — the description was returned unchanged. Check that the AI service API key is configured.
             </div>
           ) : (
             <>
@@ -353,7 +353,7 @@ function CareerChatTab() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
             </div>
-            <p className="text-sm text-muted-foreground">Ask Claude for career advice, resume tips, or interview prep.</p>
+            <p className="text-sm text-muted-foreground">Ask our AI for career advice, resume tips, or interview prep.</p>
           </div>
         ) : (
           messages.map((m, i) => {
@@ -389,7 +389,7 @@ function CareerChatTab() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask Claude for career advice…"
+          placeholder="Ask our AI for career advice…"
           disabled={loading}
           className="flex-1 px-3 py-2 text-sm rounded-lg border border-border bg-background text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#F77B0F] focus:ring-1 focus:ring-[#F77B0F] disabled:opacity-50"
         />

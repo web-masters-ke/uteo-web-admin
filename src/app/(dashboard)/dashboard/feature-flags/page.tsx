@@ -14,7 +14,7 @@ interface FeatureFlag {
 
 const PRESET_FLAGS = [
   { key: 'ai_ranking', label: 'AI Candidate Ranking', desc: 'Use AI to rank candidates by job fit score' },
-  { key: 'ai_interview_questions', label: 'AI Interview Questions', desc: 'Auto-generate interview questions using Claude' },
+  { key: 'ai_interview_questions', label: 'AI Interview Questions', desc: 'Auto-generate interview questions using our AI' },
   { key: 'ai_career_advisor', label: 'AI Career Advisor Chat', desc: 'Floating AI chat advisor for job seekers' },
   { key: 'job_alerts_email', label: 'Job Match Email Alerts', desc: 'Email notifications for new job matches' },
   { key: 'job_alerts_push', label: 'Job Match Push Notifications', desc: 'Push notifications for new job matches' },
