@@ -742,10 +742,10 @@ export default function BookingsPage() {
               <input
                 value={(createForm as any).meetingLink || ''}
                 onChange={e => setCreateForm({ ...createForm, meetingLink: e.target.value } as any)}
-                placeholder="Auto-generated if left blank (Jitsi)"
+                placeholder="Auto-generated if left blank"
                 className={icFull}
               />
-              <p className="text-xs text-muted-foreground mt-1">Leave blank to auto-generate a Jitsi video session link.</p>
+              <p className="text-xs text-muted-foreground mt-1">Leave blank to auto-generate a secure video session link.</p>
             </div>
           )}
 
